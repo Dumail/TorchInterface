@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 /*
-神经网络基本数据类型：张量
+神经网络基本数据类型：张量 
+最高二维 TODO 扩展到不定维度
  */
 public class Tensor {
     public int[] shape; //张量形状
@@ -83,7 +84,7 @@ public class Tensor {
     }
 
     /**
-     * 将张量扩展为指定形状，扩展的部分填充指定数据
+     * 将二维张量扩展为指定形状，扩展的部分填充指定数据
      *
      * @param shape 扩展后形状
      * @param pad   填充数据
@@ -100,7 +101,21 @@ public class Tensor {
                 return false;
             }
         }
-        //TODO expand
+
+        //二维张量扩展，先分配空间，然后依次复制过去
+        float[] tempData = new float[Util.prod(shape)];
+        //列扩展
+        for (int i = 0; i < this.shape[0]; i++) {
+            System.arraycopy(this.data, i * this.shape[1], tempData, i * shape[1], this.shape[1]);
+            for (int j = this.shape[1]; j < shape[1]; j++)
+                tempData[i * shape[1] + j] = pad;
+        }
+        for (int i = this.shape[0]; i < shape[0]; i++)
+            for (int j = 0; j < shape[1]; j++)
+                tempData[i * shape[1] + j] = pad;
+        //行扩展
+        this.data = tempData;
+        System.arraycopy(shape, 0, this.shape, 0, shape.length);
         return true;
     }
 
@@ -112,42 +127,68 @@ public class Tensor {
      */
     public Tensor multi(Tensor input) {
         //相乘张量至少有两维
-        if (shape.length < 2 || input.shape.length < 2) {
+        if (this.shape.length < 2 || input.shape.length < 2) {
             System.out.println("Error: Tensor dimension is too low.");
         }
         //两个张量维度需要相同
-        if (shape.length != input.shape.length) {
-            System.out.println("Error: Dimension " + shape.length + " mismatch " + input.shape.length);
+        if (this.shape.length != input.shape.length) {
+            System.out.println("Error: Dimension " + this.shape.length + " mismatch " + input.shape.length);
             return null;
         }
 
         //高于二维的形状需要相同
-        for (int i = 0; i < shape.length - 2; i++) {
-            if (shape[i] != input.shape[i]) {
-                System.out.println("Error: Multiplied shape " + Arrays.toString(shape) + " by shape " + Arrays.toString(input.shape));
+        for (int i = 0; i < this.shape.length - 2; i++) {
+            if (this.shape[i] != input.shape[i]) {
+                System.out.println("Error: Multiplied this.shape " + Arrays.toString(shape) + " by this.shape " + Arrays.toString(input.shape));
                 return null;
             }
         }
 
         //相乘矩阵的行和列
-        int rowOfMat1 = shape[shape.length - 2];
-        int colOfMat1 = shape[shape.length - 1];
+        int rowOfMat1 = this.shape[this.shape.length - 2];
+        int colOfMat1 = this.shape[this.shape.length - 1];
         int rowOfMat2 = input.shape[input.shape.length - 2];
         int colOfMat2 = input.shape[input.shape.length - 1];
 
         //相乘的两维行与列相同
         if (colOfMat1 != rowOfMat2) {
-            System.out.println("Error: Multiplied shape " + Arrays.toString(shape) + " by shape " + Arrays.toString(input.shape));
+            System.out.println("Error: Multiplied this.shape " + Arrays.toString(shape) + " by this.shape " + Arrays.toString(input.shape));
             return null;
         }
 
         //实例化输出张量
-        int[] outShape = Arrays.copyOf(shape, shape.length);
+        int[] outShape = Arrays.copyOf(this.shape, this.shape.length);
         outShape[outShape.length - 1] = colOfMat2;
         Tensor output = new Tensor(outShape);
 
-        //TODO 矩阵相乘
-        return null;
+        //二维矩阵相乘
+        for (int i = 0; i < rowOfMat1; i++)
+            for (int j = 0; j < colOfMat2; j++) {
+                output.data[i * rowOfMat1 + j] = 0;
+                for (int k = 0; k < colOfMat1; k++)
+                    output.data[i * rowOfMat1 + j] += this.data[i * colOfMat1 + k] * input.data[k * colOfMat2 + j];
+            }
+
+        return output;
     }
 
+    @Override
+    public String toString() {
+        return "Tensor : \n shape: " + Arrays.toString(this.shape) + " \n" + " data: " + Arrays.toString(this.data);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tensor tensor = (Tensor) o;
+        return Arrays.equals(shape, tensor.shape) && Arrays.equals(data, tensor.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(shape);
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
+    }
 }
