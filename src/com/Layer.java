@@ -1,28 +1,21 @@
 package com;
 
-import java.util.Arrays;
-
-/*
-神经网络层
+/**
+ * 基础神经网络层，具有网络参数
  */
-public abstract class Layer {
-    private float[] parameters; //网络参数
-    private int inputSize; //输入节点数
-    private int outputSize; //输出节点数
+public abstract class Layer extends Module {
+    protected Tensor parameters; //神经网络参数
 
-    public Layer(int inputSize, int outputSize) {
-        this.inputSize = inputSize;
-        this.outputSize = outputSize;
-    }
-
-    public void setParameters(float[] parameters) {
-        this.parameters = parameters;
-    }
-
-    /*
-    网络层正向传播
+    /**
+     * 神经网络层构造函数
+     * @param inputSize 输入节点数
+     * @param outputSize 输出节点数
      */
-    public Tensor forward(Tensor input) {
-        return input;
+    public Layer(int inputSize, int outputSize) {
+        super(inputSize, outputSize);
+    }
+
+    public void setParameters(Tensor parameters) {
+        this.parameters = parameters;
     }
 }
