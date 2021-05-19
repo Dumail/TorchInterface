@@ -29,4 +29,9 @@ public class Linear extends Layer {
 
         return input.multi(parameters);
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "Linear: \n input size: " + inputSize + ", output size: " + outputSize + "\n parameters:" + this.parameters;
+    }
 }
