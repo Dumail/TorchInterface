@@ -12,12 +12,19 @@ public class Tensor {
     public int[] shape; //张量形状
     private float[] data; //张量数据，采取一维数组存储
 
+
+//    public Tensor(int[] shape) {
+//        this.shape = new int[shape.length];
+//        System.arraycopy(shape, 0, this.shape, 0, shape.length);
+//        this.data = new float[Util.prod(shape)];
+//    }
+
     /**
      * 从数据形状构造张量
      *
      * @param shape 形状数组
      */
-    public Tensor(int[] shape) {
+    public Tensor(int... shape) {
         this.shape = new int[shape.length];
         System.arraycopy(shape, 0, this.shape, 0, shape.length);
         this.data = new float[Util.prod(shape)];
@@ -66,6 +73,25 @@ public class Tensor {
         for (int i = 0; i < data.length; i++)
             System.arraycopy(data[i], 0, this.data, i * data[0].length, data[0].length);
         this.shape = new int[]{data.length, data[0].length};
+    }
+
+    /**
+     * 索引指定位置的值
+     *
+     * @param index 索引，需要与张量的维度一样
+     * @return 指定值
+     */
+    public float getOfIndex(int... index) {
+        //只能一次索引一个值，且不能省略0
+        if (this.shape.length != index.length) {
+            System.out.println("Warning: index shape " + this.shape.length + " mismatch data shape " + index.length);
+            return -1;
+        }
+        int pos = 0; //总的位置下标
+        for (int i = 0; i < index.length - 1; i++)
+            pos += index[i] * this.shape[i + 1];
+        pos += index[index.length - 1];
+        return this.data[pos];
     }
 
     /**

@@ -18,7 +18,12 @@ class LinearTest {
     @org.junit.jupiter.api.Test
     void forward() {
         Tensor input = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6}});
-        Tensor parameters = new Tensor(new int[]{4,3});
+        Tensor parameters = new Tensor(4, 3);
         System.out.println(linear.forward(input));
+    }
+
+    @org.junit.jupiter.api.Test
+    void readParameters() {
+        assert linear.readParameters("src/com/pars.pt");
     }
 }

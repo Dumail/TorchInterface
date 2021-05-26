@@ -10,7 +10,7 @@ public class Linear extends Layer {
     public Linear(int inputSize, int outputSize) {
         super(inputSize, outputSize);
         //矩阵形式，输入节点数x输出节点数，+1是由于将偏置也写入了矩阵
-        parameters = new Tensor(new int[]{inputSize + 1, outputSize});
+        parameters = new Tensor(inputSize + 1, outputSize);
         parameters.randomData(); //随机初始化权重
     }
 
@@ -33,5 +33,42 @@ public class Linear extends Layer {
     @Override
     public String toString() {
         return super.toString() + "Linear: \n input size: " + inputSize + ", output size: " + outputSize + "\n parameters:" + this.parameters;
+    }
+
+    @Override
+    public boolean loadParameters(String parameters) {
+        String[] listParameters = parameters.split("\n");
+        int[] weight_shape, bias_shape;
+        float[] weight, bias;
+        try {
+            //得到权重形状数组
+            weight_shape = Arrays.stream(listParameters[0].substring(1, listParameters[0].length() - 1).replace(" ", "").split(",")).mapToInt(Integer::parseInt).toArray();
+            //得到权重数组
+            String[] weight_str = listParameters[1].substring(1, listParameters[1].length() - 1).trim().replace("  ", " ").split(" ");
+            weight = new float[weight_str.length];
+            for (int i = 0; i < weight_str.length; i++) {
+                weight[i] = Float.parseFloat(weight_str[i]);
+            }
+
+            //得到偏置形状数组
+            bias_shape = Arrays.stream(listParameters[3].substring(1, listParameters[3].length() - 1).replace(" ", "").split(",")).mapToInt(Integer::parseInt).toArray();
+            //得到偏置数组
+            String[] bias_str = listParameters[4].substring(1, listParameters[4].length() - 1).trim().replace("  ", " ").split(" ");
+            bias = new float[bias_str.length];
+            for (int i = 0; i < bias_str.length; i++) {
+                bias[i] = Float.parseFloat(bias_str[i]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        //TODO set parameters
+
+        System.out.println(Arrays.toString(weight_shape));
+        System.out.println(Arrays.toString(weight));
+        System.out.println(Arrays.toString(bias_shape));
+        System.out.println(Arrays.toString(bias));
+        return true;
     }
 }
