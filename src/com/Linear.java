@@ -16,7 +16,7 @@ public class Linear extends Layer {
 
     @Override
     public Tensor forward(Tensor input) {
-        //输入数据的形状应该是（特征维度x输入节点数）
+        //输入数据的形状应该是（数据条数x特征维度）
         if (input.shape[input.shape.length - 1] != inputSize) {
             System.out.println("Error: Input tensor size " + input.shape[input.shape.length - 1] + " mismatch layer input size " + inputSize);
         }
@@ -63,7 +63,7 @@ public class Linear extends Layer {
             return false;
         }
 
-        if (weight_shape[0] != inputSize || outputSize != weight_shape[1]) {
+        if (weight_shape[1] != inputSize || outputSize != weight_shape[0]) {
             System.out.println("Error: weight " + Arrays.toString(weight_shape) + " mismatch input size " + this.inputSize + " or output size " + this.outputSize);
             return false;
         }
@@ -73,11 +73,10 @@ public class Linear extends Layer {
             return false;
         }
 
+
         float[] parameters = new float[weight_shape[0] * (weight_shape[1] + 1)];
-        for (int i = 0; i < weight_shape[0]; i++) {
-            System.arraycopy(weight, i * weight_shape[1], parameters, i * (weight_shape[1] + 1), weight_shape[1]);
-            parameters[i * (weight_shape[1] + 1) + weight_shape[1]] = bias[i];
-        }
+        System.arraycopy(weight, 0, parameters, 0, weight_shape[0] * weight_shape[1]);
+        System.arraycopy(bias, 0, parameters, weight_shape[0] * weight_shape[1], bias_shape[0]);
         setParameters(parameters);
         return true;
     }

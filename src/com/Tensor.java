@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /*
-神经网络基本数据类型：张量 
-最高二维 TODO 扩展到不定维度
+神经网络基本数据类型：张量
  */
 public class Tensor {
     public int[] shape; //张量形状
@@ -109,7 +108,7 @@ public class Tensor {
             System.out.println("Error: Data size " + data.length + " can not reshape to " + Arrays.toString(shape) + "!");
             return false;
         }
-        System.arraycopy(shape, 0, this.shape, 0, shape.length);
+        this.shape=shape;
         return true;
     }
 
@@ -189,17 +188,19 @@ public class Tensor {
         //实例化输出张量
         int[] outShape = Arrays.copyOf(this.shape, this.shape.length);
         outShape[outShape.length - 1] = colOfMat2;
-        Tensor output = new Tensor(outShape);
+        float[] output = new float[Util.prod(outShape)];
 
+        //TODO 任意维度张量相乘
         //二维矩阵相乘
         for (int i = 0; i < rowOfMat1; i++)
             for (int j = 0; j < colOfMat2; j++) {
-                output.data[i * rowOfMat1 + j] = 0;
+                output[i * colOfMat2 + j] = 0;
                 for (int k = 0; k < colOfMat1; k++)
-                    output.data[i * rowOfMat1 + j] += this.data[i * colOfMat1 + k] * input.data[k * colOfMat2 + j];
+                    output[i * colOfMat2 + j] += this.data[i * colOfMat1 + k] * input.data[k * colOfMat2 + j];
             }
-
-        return output;
+        Tensor result = new Tensor(output);
+        result.reshape(new int[]{rowOfMat1, colOfMat2});
+        return result;
     }
 
     @Override

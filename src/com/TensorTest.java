@@ -7,7 +7,7 @@ class TensorTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        float[][] data = new float[][]{{1, 2, 3}, {4, 5, 6}};
+        float[][] data = new float[][]{{1, 1, 1}, {1, 1, 1}};
         tensor = new Tensor(data);
     }
 
@@ -23,7 +23,7 @@ class TensorTest {
 
     @org.junit.jupiter.api.Test
     void reshape() {
-        assert tensor.reshape(new int[]{3, 2});
+        tensor.reshape(new int[]{3, 2});
     }
 
     @org.junit.jupiter.api.Test
@@ -33,9 +33,9 @@ class TensorTest {
 
     @org.junit.jupiter.api.Test
     void multi() {
-        Tensor tensorTest = new Tensor(new float[][]{{1, 2}, {3, 4}, {5, 6}});
+        Tensor tensorTest = new Tensor(new float[][]{{1}, {1}, {1}});
         System.out.println(tensorTest);
-        System.out.println(tensor.multi(tensorTest));
+        System.out.println("\nResult: "+tensor.multi(tensorTest)+"\n");
     }
 
     @org.junit.jupiter.api.Test
