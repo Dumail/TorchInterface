@@ -22,6 +22,10 @@ public abstract class Layer extends Module {
         this.parameters = parameters;
     }
 
+    public void setParameters(float[] parameters) {
+        this.parameters.setData(parameters);
+    }
+
     /**
      * 从字符串载入网络层参数
      *

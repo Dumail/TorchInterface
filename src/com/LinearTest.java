@@ -7,7 +7,7 @@ class LinearTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        linear = new Linear(3, 3);
+        linear = new Linear(2, 3);
     }
 
     @org.junit.jupiter.api.AfterEach

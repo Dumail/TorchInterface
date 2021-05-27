@@ -36,8 +36,8 @@ public class Linear extends Layer {
     }
 
     @Override
-    public boolean loadParameters(String parameters) {
-        String[] listParameters = parameters.split("\n");
+    public boolean loadParameters(String parameters_str) {
+        String[] listParameters = parameters_str.split("\n");
         int[] weight_shape, bias_shape;
         float[] weight, bias;
         try {
@@ -63,12 +63,22 @@ public class Linear extends Layer {
             return false;
         }
 
-        //TODO set parameters
+        if (weight_shape[0] != inputSize || outputSize != weight_shape[1]) {
+            System.out.println("Error: weight " + Arrays.toString(weight_shape) + " mismatch input size " + this.inputSize + " or output size " + this.outputSize);
+            return false;
+        }
 
-        System.out.println(Arrays.toString(weight_shape));
-        System.out.println(Arrays.toString(weight));
-        System.out.println(Arrays.toString(bias_shape));
-        System.out.println(Arrays.toString(bias));
+        if (weight_shape[0] != bias_shape[0]) {
+            System.out.println("Error: weight " + Arrays.toString(weight_shape) + " mismatch bias " + Arrays.toString(bias_shape));
+            return false;
+        }
+
+        float[] parameters = new float[weight_shape[0] * (weight_shape[1] + 1)];
+        for (int i = 0; i < weight_shape[0]; i++) {
+            System.arraycopy(weight, i * weight_shape[1], parameters, i * (weight_shape[1] + 1), weight_shape[1]);
+            parameters[i * (weight_shape[1] + 1) + weight_shape[1]] = bias[i];
+        }
+        setParameters(parameters);
         return true;
     }
 }

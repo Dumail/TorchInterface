@@ -94,6 +94,10 @@ public class Tensor {
         return this.data[pos];
     }
 
+    public void setData(float[] data) {
+        this.data = data;
+    }
+
     /**
      * 改变张量形状
      *
