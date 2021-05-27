@@ -1,7 +1,9 @@
 package com;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /*
@@ -203,6 +205,113 @@ public class Tensor {
         return result;
     }
 
+
+    public int numParas(){   // 获取数据的长度
+        return this.data.length;
+    }
+
+    public void setData(float[] inputData){
+        System.arraycopy(inputData, 0, this.data, 0, inputData.length);
+    }
+
+    public float[] getData(){    // 获取所有数据
+        return  this.data;
+    }
+
+
+
+
+        // doing `````````
+    public Tensor getData(String inputs){
+        // 模仿 python 列表切片的输入 , 暂不实现 -1 操作 ,也不包括 只取一行的操作
+        if(!inputs.startsWith("[") || ! inputs.endsWith("]") || inputs.split(",").length != shape.length)
+            return null;
+        String[] splits =  inputs.replace("[","").replace("]","").split(",");
+        int[][] newShape = new int[shape.length][2];
+        int[] rsShape = new int[shape.length];
+        for(int i  = 0; i < shape.length; i++) {
+          int originalLength = shape[i];
+          String indexSplit =  splits[i];
+          int start = 0 ;
+          int end = originalLength ;
+              if(indexSplit.equals(":")){
+                  newShape[i][0] = 0;
+                  newShape[i][1] = originalLength;
+              }else if(indexSplit.length() == 1 ){             //
+                  newShape[i][0] = 0;
+                  newShape[i][1] = originalLength;
+              }else if(indexSplit.split(":").length == 1){
+                  start =  Integer.parseInt(indexSplit.split(":")[0]);
+                  newShape[i][0] = start;
+                  newShape[i][1] = end;
+              }else if(indexSplit.split(":").length == 2){
+                  start =  indexSplit.split(":")[0].length() != 0 ? Integer.parseInt(indexSplit.split(":")[0]) : 0;
+                  newShape[i][0] = start;
+                  end =   indexSplit.split(":")[1].length() != 0 ? Integer.parseInt(indexSplit.split(":")[1]) : originalLength;
+                  newShape[i][1] = end;
+              }
+              if(end > originalLength || start > originalLength || start >= end || start < 0 ){
+                  return null ;  //切片输入不合法
+              }
+            rsShape[i] = newShape[i][1] -  newShape[i][0];
+        }   // of for
+
+
+        int[] shapeSize = new int[shape.length+1];   // 用来保存每一维包含的元素个数
+        int size = 1 ;
+        shapeSize[shape.length] = 1 ;
+        List<Float> lists = new ArrayList<Float>();
+        System.arraycopy(shape, 0, shapeSize, 0, rsShape.length);
+        int[] tmpSize  = new int[shapeSize.length];
+        System.arraycopy(shapeSize, 0, tmpSize, 0, shapeSize.length);
+        for(int i  = 0; i < shape.length; i++) {        // 计算每个维度所含的元素个数
+            size = size  * tmpSize[shape.length - i];
+            shapeSize[shape.length - 1 - i] = size  ;
+        }// of for
+        for (int i = 0; i <  data.length; i++) {        // 遍历明日歌元素，从index计算出其位置，判断是否符合要求的下标
+            boolean isAdd = true ;
+            int start = i;      // 记录开始位置
+            for (int j = 0; j < shape.length ; j++) {
+                int index =  start / shapeSize[j] ;         // 下标除以第 j 维的元素个数，可以得到该元素在第 j 维的位置
+                if ( index <  newShape[j][0] ||  index >= newShape[j][1] ) {   // 判断其位置是否在输入的对应维度区间内
+                    isAdd = false ;
+                    break;
+                }
+                start = start % shapeSize[j] ;              // 之后开始判断下一维的位置，从高维到低维
+            } // of for j
+
+            if (isAdd == false)
+                continue;
+            lists.add(data[i]);
+        } // of for  i
+
+
+
+
+        // 目前是返回一个新Tensor
+        Tensor tensor = new Tensor(rsShape);
+        int len = lists.size();
+        float[] rsData = new float[len];
+        for (int i = 0; i < len ; i++) {
+            rsData[i] = lists.get(i);
+        }
+        tensor.setData(rsData);
+
+        // 修改自身数据
+//        int len = lists.size();
+//        float[] rsData = new float[len];
+//        for (int i = 0; i < len ; i++) {
+//            rsData[i] = lists.get(i);
+//        }
+//        shape = rsShape ;
+//        setData(rsData);
+
+        return tensor;
+    }
+
+
+
+
     @Override
     public String toString() {
         return "Tensor : \n shape: " + Arrays.toString(this.shape) + " \n" + " data: " + Arrays.toString(this.data);
@@ -222,4 +331,7 @@ public class Tensor {
         result = 31 * result + Arrays.hashCode(data);
         return result;
     }
+
+
+
 }

@@ -11,6 +11,10 @@ public class Relu extends Layer {
 
     @Override
     public Tensor forward(Tensor input) {
-        return null;
+        Tensor tensor = new Tensor(input.shape) ;
+        tensor.setData(Util.relu(input.getData()));
+        return tensor;
     }
+
+
 }
