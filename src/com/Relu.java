@@ -1,7 +1,7 @@
 package com;
 
 /*
-Relu激活函数
+Relu Layer
  */
 public class Relu extends Layer {
 
@@ -11,10 +11,9 @@ public class Relu extends Layer {
 
     @Override
     public Tensor forward(Tensor input) {
-        Tensor tensor = new Tensor(input.shape) ;
+        Tensor tensor = new Tensor(input.shape);
         tensor.setData(Util.relu(input.getData()));
         return tensor;
     }
-
 
 }

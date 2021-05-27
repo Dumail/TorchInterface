@@ -1,4 +1,7 @@
-package com;
+package test;
+
+import com.Linear;
+import com.Tensor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +27,7 @@ class LinearTest {
 
     @org.junit.jupiter.api.Test
     void readParameters() {
-        assert linear.readParameters("src/com/pars.pt");
+        assert linear.readParameters("src/com/test_pars.pt");
         Tensor input = new Tensor(new float[][]{{1, 1, 2}});
         System.out.println("Forward result: " + linear.forward(input) + "\n");
     }

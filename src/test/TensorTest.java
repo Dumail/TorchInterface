@@ -1,5 +1,6 @@
-package com;
+package test;
 
+import com.Tensor;
 import org.junit.jupiter.api.AfterEach;
 
 class TensorTest {
@@ -23,7 +24,8 @@ class TensorTest {
 
     @org.junit.jupiter.api.Test
     void reshape() {
-        tensor.reshape(new int[]{3, 2});
+        if (tensor.reshape(new int[]{3, 2}))
+            System.out.println("Shape change successful.");
     }
 
     @org.junit.jupiter.api.Test
@@ -35,7 +37,7 @@ class TensorTest {
     void multi() {
         Tensor tensorTest = new Tensor(new float[][]{{1}, {1}, {1}});
         System.out.println(tensorTest);
-        System.out.println("\nResult: "+tensor.multi(tensorTest)+"\n");
+        System.out.println("\nResult: " + tensor.multi(tensorTest) + "\n");
     }
 
     @org.junit.jupiter.api.Test
@@ -54,10 +56,10 @@ class TensorTest {
 
     @org.junit.jupiter.api.Test
     void getData() {
-        Tensor tensorTest = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6},{7,8,10}});
-        System.out.println("original : "+tensorTest);
+        Tensor tensorTest = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 10}});
+        System.out.println("original : " + tensorTest);
         Tensor tensorGetData = tensorTest.getData("[:,:1]");
-        System.out.println("result : "+tensorGetData);
+        System.out.println("result : " + tensorGetData);
 
     }
 
