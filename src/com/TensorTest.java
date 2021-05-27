@@ -51,4 +51,15 @@ class TensorTest {
         System.out.println(tensorTest);
         System.out.println("Equal: " + tensor.equals(tensorTest));
     }
+
+    @org.junit.jupiter.api.Test
+    void getData() {
+        Tensor tensorTest = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6},{7,8,10}});
+        System.out.println("original : "+tensorTest);
+        Tensor tensorGetData = tensorTest.getData("[:,:1]");
+        System.out.println("result : "+tensorGetData);
+
+    }
+
+
 }

@@ -14,4 +14,12 @@ public class Util {
         for (int j : shape) temp *= j;
         return temp;
     }
+
+    public static float[] relu(float[] input) {
+        float[] output  = new float[input.length];
+        for (int i = 0; i < input.length; i++) {
+            output[i] = input[i] > 0 ? input[i] : 0 ;
+        }
+        return output;
+    }
 }
