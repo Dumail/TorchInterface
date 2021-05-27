@@ -1,6 +1,5 @@
 package com;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -137,6 +136,35 @@ public class Tensor {
         this.data = tempData;
         System.arraycopy(shape, 0, this.shape, 0, shape.length);
         return true;
+    }
+
+    /**
+     * 求张量所有元素之和
+     *
+     * @return 求和结果
+     */
+    public float sum() {
+        float sum = 0;
+        for (float datum : this.data) sum += datum;
+        return sum;
+    }
+
+    /**
+     * 求两个张量的点乘
+     *
+     * @param input 另一个张量
+     * @return 点乘结果，出错将返回最大浮点数
+     */
+    public float dot(Tensor input) {
+        if (!Arrays.equals(this.shape, input.shape)) {
+            System.out.println("Error: shape " + Arrays.toString(this.shape) + " mismatch input shape " + Arrays.toString(input.shape));
+            return Float.MAX_VALUE;
+        }
+        float[] tempData = input.getData();
+        float sum = 0;
+        for (int i = 0; i < this.data.length; i++)
+            sum += tempData[i] * this.data[i];
+        return sum;
     }
 
     /**

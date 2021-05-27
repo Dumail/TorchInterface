@@ -23,6 +23,16 @@ class TensorTest {
     }
 
     @org.junit.jupiter.api.Test
+    void sum() {
+        System.out.println("Sum: " + tensor.sum());
+    }
+
+    @org.junit.jupiter.api.Test
+    void dot() {
+        System.out.println("Dot result: " + tensor.dot(new Tensor(new float[][]{{2, 3, 2}, {3, 2, 2}})));
+    }
+
+    @org.junit.jupiter.api.Test
     void reshape() {
         if (tensor.reshape(new int[]{3, 2}))
             System.out.println("Shape change successful.");
@@ -62,6 +72,4 @@ class TensorTest {
         System.out.println("result : " + tensorGetData);
 
     }
-
-
 }
