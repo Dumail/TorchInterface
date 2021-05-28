@@ -3,6 +3,8 @@ package test;
 import com.Tensor;
 import org.junit.jupiter.api.AfterEach;
 
+import java.util.Arrays;
+
 class TensorTest {
     Tensor tensor;
 
@@ -72,11 +74,17 @@ class TensorTest {
     }
 
     @org.junit.jupiter.api.Test
+    void getData2D(){
+        float[][] data = tensor.getData2D();
+        for(int i=0;i<tensor.shape[0];i++)
+            System.out.println(Arrays.toString(data[i]));
+    }
+
+    @org.junit.jupiter.api.Test
     void getData() {
         Tensor tensorTest = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 10}});
         System.out.println("original : " + tensorTest);
         Tensor tensorGetData = tensorTest.getData("[:,:1]");
         System.out.println("result : " + tensorGetData);
-
     }
 }

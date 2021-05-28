@@ -18,8 +18,8 @@ public class Tensor {
      * @param shape 形状数组
      */
     public Tensor(int... shape) {
-        this.shape = new int[shape.length];
-        System.arraycopy(shape, 0, this.shape, 0, shape.length);
+        this.shape = new int[dims()];
+        System.arraycopy(shape, 0, this.shape, 0, dims());
         this.data = new float[Util.prod(shape)];
     }
 
@@ -76,8 +76,8 @@ public class Tensor {
      */
     public float getOfIndex(int... index) {
         //只能一次索引一个值，且不能省略0
-        if (this.shape.length != index.length) {
-            System.out.println("Warning: index shape " + this.shape.length + " mismatch data shape " + index.length);
+        if (this.dims() != index.length) {
+            System.out.println("Warning: index shape " + this.dims() + " mismatch data shape " + index.length);
             return -1;
         }
         int pos = 0; //总的位置下标
@@ -96,7 +96,7 @@ public class Tensor {
     public Tensor getSlice(int[]... indices) {
         //TODO 任意维度切片
         //二维切片
-        if (this.shape.length > 2) {
+        if (this.dims() > 2) {
             System.out.println("Error: Current version does not support high dim.");
             return null;
         }
@@ -114,7 +114,7 @@ public class Tensor {
         }
 
         //一维切片
-        if (this.shape.length == 1) {
+        if (this.dims() == 1) {
             float[] tempData = new float[rowEnd - rowStart];
             System.arraycopy(this.data, rowStart, tempData, 0, rowEnd - rowStart);
             return new Tensor(tempData);
@@ -160,11 +160,11 @@ public class Tensor {
      * @return 是否扩展成功
      */
     public boolean expand(int[] shape, float pad) {
-        if (shape.length != this.shape.length) {
-            System.out.println("Error: Shape dimension " + this.shape.length + " mismatch " + shape.length);
+        if (dims() != this.dims()) {
+            System.out.println("Error: Shape dimension " + this.dims() + " mismatch " + dims());
             return false;
         }
-        for (int i = 0; i < shape.length; i++) {
+        for (int i = 0; i < dims(); i++) {
             if (this.shape[i] > shape[i]) {
                 System.out.println("Error: Shape " + Arrays.toString(this.shape) + " can not be less than " + Arrays.toString(shape));
                 return false;
@@ -184,7 +184,7 @@ public class Tensor {
                 tempData[i * shape[1] + j] = pad;
         //行扩展
         this.data = tempData;
-        System.arraycopy(shape, 0, this.shape, 0, shape.length);
+        System.arraycopy(shape, 0, this.shape, 0, dims());
         return true;
     }
 
@@ -225,17 +225,17 @@ public class Tensor {
      */
     public Tensor multi(Tensor input) {
         //相乘张量至少有两维
-        if (this.shape.length < 2 || input.shape.length < 2) {
+        if (this.dims() < 2 || input.dims() < 2) {
             System.out.println("Error: Tensor dimension is too low.");
         }
         //两个张量维度需要相同
-        if (this.shape.length != input.shape.length) {
-            System.out.println("Error: Dimension " + this.shape.length + " mismatch " + input.shape.length);
+        if (this.dims() != input.dims()) {
+            System.out.println("Error: Dimension " + this.dims() + " mismatch " + input.dims());
             return null;
         }
 
         //高于二维的形状需要相同
-        for (int i = 0; i < this.shape.length - 2; i++) {
+        for (int i = 0; i < this.dims() - 2; i++) {
             if (this.shape[i] != input.shape[i]) {
                 System.out.println("Error: Multiplied this.shape " + Arrays.toString(shape) + " by this.shape " + Arrays.toString(input.shape));
                 return null;
@@ -243,10 +243,10 @@ public class Tensor {
         }
 
         //相乘矩阵的行和列
-        int rowOfMat1 = this.shape[this.shape.length - 2];
-        int colOfMat1 = this.shape[this.shape.length - 1];
-        int rowOfMat2 = input.shape[input.shape.length - 2];
-        int colOfMat2 = input.shape[input.shape.length - 1];
+        int rowOfMat1 = this.shape[this.dims() - 2];
+        int colOfMat1 = this.shape[this.dims() - 1];
+        int rowOfMat2 = input.shape[input.dims() - 2];
+        int colOfMat2 = input.shape[input.dims() - 1];
 
         //相乘的两维行与列相同
         if (colOfMat1 != rowOfMat2) {
@@ -255,7 +255,7 @@ public class Tensor {
         }
 
         //实例化输出张量
-        int[] outShape = Arrays.copyOf(this.shape, this.shape.length);
+        int[] outShape = Arrays.copyOf(this.shape, this.dims());
         outShape[outShape.length - 1] = colOfMat2;
         float[] output = new float[Util.prod(outShape)];
 
@@ -272,27 +272,51 @@ public class Tensor {
         return result;
     }
 
-    public int numParas() {   // 获取数据的长度
+    public int size() {   // 获取数据的长度
         return this.data.length;
+    }
+
+    public int dims() {
+        return this.shape.length;
     }
 
     public void setData(float[] inputData) {
         System.arraycopy(inputData, 0, this.data, 0, inputData.length);
     }
 
-    public float[] getData() {    // 获取所有数据
+
+    /**
+     * 获取原始的数据
+     * @return 一维的原始数据
+     */
+    public float[] getData() {
         return Arrays.copyOf(this.data, this.data.length);
+    }
+
+    /**
+     * 获取二维张量的数据
+     * @return 二维数组
+     */
+    public float[][] getData2D() {
+        if (this.dims() != 2) {
+            System.out.println("Error: Tensor dim is not 2.");
+            return null;
+        }
+        float[][] tempData = new float[this.shape[0]][this.shape[1]];
+        for(int i=0;i<this.shape[0];i++)
+            System.arraycopy(this.data,i*this.shape[1],tempData[i],0,this.shape[1]);
+        return tempData;
     }
 
     //TODO complete
     public Tensor getData(String inputs) {
         // 模仿 python 列表切片的输入 , 暂不实现 -1 操作 ,也不包括 只取一行的操作
-        if (!inputs.startsWith("[") || !inputs.endsWith("]") || inputs.split(",").length != shape.length)
+        if (!inputs.startsWith("[") || !inputs.endsWith("]") || inputs.split(",").length != dims())
             return null;
         String[] splits = inputs.replace("[", "").replace("]", "").split(",");
-        int[][] newShape = new int[shape.length][2];
-        int[] rsShape = new int[shape.length];
-        for (int i = 0; i < shape.length; i++) {
+        int[][] newShape = new int[dims()][2];
+        int[] rsShape = new int[dims()];
+        for (int i = 0; i < dims(); i++) {
             int originalLength = shape[i];
             String indexSplit = splits[i];
             int start = 0;
@@ -319,21 +343,21 @@ public class Tensor {
             rsShape[i] = newShape[i][1] - newShape[i][0];
         }   // of for
 
-        int[] shapeSize = new int[shape.length + 1];   // 用来保存每一维包含的元素个数
+        int[] shapeSize = new int[dims() + 1];   // 用来保存每一维包含的元素个数
         int size = 1;
-        shapeSize[shape.length] = 1;
+        shapeSize[dims()] = 1;
         List<Float> lists = new ArrayList<>();
         System.arraycopy(shape, 0, shapeSize, 0, rsShape.length);
         int[] tmpSize = new int[shapeSize.length];
         System.arraycopy(shapeSize, 0, tmpSize, 0, shapeSize.length);
-        for (int i = 0; i < shape.length; i++) {        // 计算每个维度所含的元素个数
-            size = size * tmpSize[shape.length - i];
-            shapeSize[shape.length - 1 - i] = size;
+        for (int i = 0; i < dims(); i++) {        // 计算每个维度所含的元素个数
+            size = size * tmpSize[dims() - i];
+            shapeSize[dims() - 1 - i] = size;
         }// of for
         for (int i = 0; i < data.length; i++) {        // 遍历明日歌元素，从index计算出其位置，判断是否符合要求的下标
             boolean isAdd = true;
             int start = i;      // 记录开始位置
-            for (int j = 0; j < shape.length; j++) {
+            for (int j = 0; j < dims(); j++) {
                 int index = start / shapeSize[j];         // 下标除以第 j 维的元素个数，可以得到该元素在第 j 维的位置
                 if (index < newShape[j][0] || index >= newShape[j][1]) {   // 判断其位置是否在输入的对应维度区间内
                     isAdd = false;
