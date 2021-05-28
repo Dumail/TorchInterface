@@ -88,6 +88,56 @@ public class Tensor {
     }
 
     /**
+     * 通过指定的开始坐标和和结束坐标获取张量切片
+     *
+     * @param indices 一个数组代表一个维度，维度从高到低。 每个数组指定开始和结束的位置，负数表示从后往前，大于该维度总数代表取该维度所有数
+     * @return 切片结果张量
+     */
+    public Tensor getSlice(int[]... indices) {
+        //TODO 任意维度切片
+        //二维切片
+        if (this.shape.length > 2) {
+            System.out.println("Error: Current version does not support high dim.");
+            return null;
+        }
+
+        //第一维起始点
+        int rowStart = indices[0][0];
+        int rowEnd = indices[0][1];
+        //限定切片范围
+        rowStart = rowStart < 0 ? this.shape[0] + rowStart : Math.min(rowStart, this.shape[0]);
+        rowEnd = rowEnd < 0 ? this.shape[0] + rowEnd : Math.min(rowEnd, this.shape[0]);
+        if (rowStart > rowEnd) {
+            System.out.println("Error: Start index must smaller than end index.");
+            return null;
+            //TODO 反向切片
+        }
+
+        //一维切片
+        if (this.shape.length == 1) {
+            float[] tempData = new float[rowEnd - rowStart];
+            System.arraycopy(this.data, rowStart, tempData, 0, rowEnd - rowStart);
+            return new Tensor(tempData);
+        }
+
+        //第二维起始点
+        int colStart = indices[1][0];
+        int colEnd = indices[1][1];
+        //限定切片范围
+        colStart = colStart < 0 ? this.shape[1] + colStart : Math.min(colStart, this.shape[1]);
+        if (colStart > colEnd) {
+            System.out.println("Error: Start index must smaller than end index.");
+            return null;
+        }
+
+        float[][] tempData = new float[rowEnd - rowStart][colEnd - colStart];
+        for (int i = rowStart; i < rowEnd; i++)
+            if (colEnd - colStart >= 0)
+                System.arraycopy(this.data, i * this.shape[1] + colStart, tempData[i - rowStart], 0, colEnd - colStart);
+        return new Tensor(tempData);
+    }
+
+    /**
      * 改变张量形状
      *
      * @param shape 新的数据形状

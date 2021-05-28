@@ -58,6 +58,13 @@ class TensorTest {
     }
 
     @org.junit.jupiter.api.Test
+    void getSlice(){
+        Tensor tensor1D = new Tensor(new float[] {1,2,3,4,5});
+        System.out.println("1d slice: "+tensor1D.getSlice(new int[]{-4,Integer.MAX_VALUE}));
+        System.out.println("2d slice: "+tensor.getSlice(new int[]{0,3},new int[]{1,3}));
+    }
+
+    @org.junit.jupiter.api.Test
     void equal() {
         Tensor tensorTest = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6}});
         System.out.println(tensorTest);
