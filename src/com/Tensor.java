@@ -18,7 +18,7 @@ public class Tensor {
      * @param shape 形状数组
      */
     public Tensor(int... shape) {
-        this.shape = new int[dims()];
+        this.shape = new int[shape.length];
         System.arraycopy(shape, 0, this.shape, 0, dims());
         this.data = new float[Util.prod(shape)];
     }
@@ -47,15 +47,6 @@ public class Tensor {
     }
 
     /**
-     * 数据化数据
-     */
-    public void randomData() {
-        Random rand = new Random();
-        for (int i = 0; i < data.length; i++)
-            data[i] = rand.nextFloat();
-    }
-
-    /**
      * 从二维数据构造张量
      *
      * @param data 数组数据
@@ -66,6 +57,28 @@ public class Tensor {
         for (int i = 0; i < data.length; i++)
             System.arraycopy(data[i], 0, this.data, i * data[0].length, data[0].length);
         this.shape = new int[]{data.length, data[0].length};
+    }
+
+    /**
+     * 从三维数据构造张量
+     *
+     * @param data 数组数据
+     */
+    public Tensor(float[][][] data) {
+        this.data = new float[data.length * data[0].length * data[0][0].length];
+        for (int i = 0; i < data.length; i++)
+            for (int j = 0; j < data[0].length; j++)
+                System.arraycopy(data[i][j], 0, this.data, i * data[0].length * data[0][0].length + j * data[0].length, data[0][0].length);
+        this.shape = new int[]{data.length, data[0].length, data[0][0].length};
+    }
+
+    /**
+     * 随机化数据
+     */
+    public void randomData() {
+        Random rand = new Random();
+        for (int i = 0; i < data.length; i++)
+            data[i] = rand.nextFloat();
     }
 
     /**
@@ -107,6 +120,11 @@ public class Tensor {
         //限定切片范围
         rowStart = rowStart < 0 ? this.shape[0] + rowStart : Math.min(rowStart, this.shape[0]);
         rowEnd = rowEnd < 0 ? this.shape[0] + rowEnd : Math.min(rowEnd, this.shape[0]);
+        //处理后的值不能小于0
+        if (rowStart < 0 || rowEnd < 0) {
+            System.out.println("Error: index out of low bound.");
+            return null;
+        }
         if (rowStart > rowEnd) {
             System.out.println("Error: Start index must smaller than end index.");
             return null;
@@ -125,6 +143,12 @@ public class Tensor {
         int colEnd = indices[1][1];
         //限定切片范围
         colStart = colStart < 0 ? this.shape[1] + colStart : Math.min(colStart, this.shape[1]);
+        colEnd = colEnd < 0 ? this.shape[1] + colEnd : Math.min(colEnd, this.shape[1]);
+        //处理后的值不能小于0
+        if (colStart < 0 || colEnd < 0) {
+            System.out.println("Error: index out of low bound.");
+            return null;
+        }
         if (colStart > colEnd) {
             System.out.println("Error: Start index must smaller than end index.");
             return null;
@@ -132,8 +156,7 @@ public class Tensor {
 
         float[][] tempData = new float[rowEnd - rowStart][colEnd - colStart];
         for (int i = rowStart; i < rowEnd; i++)
-            if (colEnd - colStart >= 0)
-                System.arraycopy(this.data, i * this.shape[1] + colStart, tempData[i - rowStart], 0, colEnd - colStart);
+            System.arraycopy(this.data, i * this.shape[1] + colStart, tempData[i - rowStart], 0, colEnd - colStart);
         return new Tensor(tempData);
     }
 
@@ -153,7 +176,50 @@ public class Tensor {
     }
 
     /**
-     * 将二维张量扩展为指定形状，扩展的部分填充指定数据
+     * 去掉张量中形状为1的维度
+     * 例如Ax1xBx1的张量处理后为AxB
+     */
+    public void squeeze() {
+        //获取形状不是1的维度个数
+        int tempDim = 0;
+        for (int i = 0; i < dims(); i++)
+            if (this.shape[i] != 1)
+                tempDim++;
+        int[] tempShape = new int[tempDim];
+
+        //赋值
+        int index = 0;
+        for (int i = 0; i < dims(); i++)
+            if (this.shape[i] != 1)
+                tempShape[index++] = this.shape[i];
+        this.shape = tempShape;
+    }
+
+    /**
+     * 在指定位置上增加维度
+     *
+     * @param index 指定位置
+     * @return 是否成功
+     */
+    public boolean unSqueeze(int index) {
+        index = index < 0 ? dims() + index + 1 : Math.min(index, this.shape[1]);
+        if (index < 0 || index > dims()) {
+            System.out.println("Error: index must bigger than 0 and smaller than " + dims());
+            return false;
+        }
+        int[] tempShape = new int[dims() + 1];
+        int i = 0;
+        for (; i < index; i++)
+            tempShape[i] = this.shape[i];
+        tempShape[i] = 1; //在指定位置添加一个维度
+        for (; i < dims(); i++)
+            tempShape[i + 1] = this.shape[i];
+        this.shape = tempShape;
+        return true;
+    }
+
+    /**
+     * 将二维张量扩展为指定形状，向索引增加的方向进行扩展，扩展的部分填充指定数据
      *
      * @param shape 扩展后形状
      * @param pad   填充数据
@@ -287,6 +353,7 @@ public class Tensor {
 
     /**
      * 获取原始的数据
+     *
      * @return 一维的原始数据
      */
     public float[] getData() {
@@ -295,6 +362,7 @@ public class Tensor {
 
     /**
      * 获取二维张量的数据
+     *
      * @return 二维数组
      */
     public float[][] getData2D() {
@@ -303,8 +371,43 @@ public class Tensor {
             return null;
         }
         float[][] tempData = new float[this.shape[0]][this.shape[1]];
-        for(int i=0;i<this.shape[0];i++)
-            System.arraycopy(this.data,i*this.shape[1],tempData[i],0,this.shape[1]);
+        for (int i = 0; i < this.shape[0]; i++)
+            System.arraycopy(this.data, i * this.shape[1], tempData[i], 0, this.shape[1]);
+        return tempData;
+    }
+
+    /**
+     * 获取三维张量的数据
+     *
+     * @return 三维数组
+     */
+    public float[][][] getData3D() {
+        if (this.dims() != 3) {
+            System.out.println("Error: Tensor dim is not 3");
+            return null;
+        }
+        float[][][] tempData = new float[this.shape[0]][this.shape[1]][this.shape[2]];
+        for (int i = 0; i < this.shape[0]; i++)
+            for (int j = 0; j < this.shape[1]; j++)
+                System.arraycopy(this.data, i * this.shape[1] * this.shape[2] + j * this.shape[2], tempData[i][j], 0, this.shape[2]);
+        return tempData;
+    }
+
+    /**
+     * 获取四维张量的数据
+     *
+     * @return 四维数组
+     */
+    public float[][][][] getData4D() {
+        if (this.dims() != 4) {
+            System.out.println("Error: Tensor dim is not 4");
+            return null;
+        }
+        float[][][][] tempData = new float[this.shape[0]][this.shape[1]][this.shape[2]][this.shape[3]];
+        for (int i = 0; i < this.shape[0]; i++)
+            for (int j = 0; j < this.shape[1]; j++)
+                for (int k = 0; k < this.shape[2]; k++)
+                    System.arraycopy(this.data, i * this.shape[1] * this.shape[2] * this.shape[3] + j * this.shape[2] * this.shape[3] + k * this.shape[3], tempData[i][j][k], 0, this.shape[3]);
         return tempData;
     }
 
@@ -410,5 +513,11 @@ public class Tensor {
         int result = Arrays.hashCode(shape);
         result = 31 * result + Arrays.hashCode(data);
         return result;
+    }
+
+    //广播加法
+    public void add(float input) {
+        for(int i=0;i<this.data.length;i++)
+            this.data[i]+=input;
     }
 }

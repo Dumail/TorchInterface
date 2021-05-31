@@ -46,6 +46,21 @@ class TensorTest {
     }
 
     @org.junit.jupiter.api.Test
+    void unSqueeze() {
+        boolean success = tensor.unSqueeze(0);
+        success = tensor.unSqueeze(-1) && success;
+        assert success;
+    }
+
+    @org.junit.jupiter.api.Test
+    void squeeze() {
+        tensor.unSqueeze(0);
+        tensor.unSqueeze(-1);
+        tensor.unSqueeze(2);
+        tensor.squeeze();
+    }
+
+    @org.junit.jupiter.api.Test
     void multi() {
         Tensor tensorTest = new Tensor(new float[][]{{1}, {1}, {1}});
         System.out.println(tensorTest);
@@ -60,10 +75,10 @@ class TensorTest {
     }
 
     @org.junit.jupiter.api.Test
-    void getSlice(){
-        Tensor tensor1D = new Tensor(new float[] {1,2,3,4,5});
-        System.out.println("1d slice: "+tensor1D.getSlice(new int[]{-4,Integer.MAX_VALUE}));
-        System.out.println("2d slice: "+tensor.getSlice(new int[]{0,3},new int[]{1,3}));
+    void getSlice() {
+        Tensor tensor1D = new Tensor(new float[]{1, 2, 3, 4, 5});
+        System.out.println("1d slice: " + tensor1D.getSlice(new int[]{-4, Integer.MAX_VALUE}));
+        System.out.println("2d slice: " + tensor.getSlice(new int[]{0, 3}, new int[]{1, 3}));
     }
 
     @org.junit.jupiter.api.Test
@@ -74,9 +89,9 @@ class TensorTest {
     }
 
     @org.junit.jupiter.api.Test
-    void getData2D(){
+    void getData2D() {
         float[][] data = tensor.getData2D();
-        for(int i=0;i<tensor.shape[0];i++)
+        for (int i = 0; i < tensor.shape[0]; i++)
             System.out.println(Arrays.toString(data[i]));
     }
 
