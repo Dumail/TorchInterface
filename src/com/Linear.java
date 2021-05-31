@@ -16,8 +16,8 @@ public class Linear extends Layer {
     @Override
     public Tensor forward(Tensor input) {
         //输入数据的形状应该是（数据条数x特征维度）
-        if (input.shape[input.shape.length - 1] != inputSize) {
-            System.out.println("Error: Input tensor size " + input.shape[input.shape.length - 1] + " mismatch layer input size " + inputSize);
+        if (input.shape[input.dims() - 1] != inputSize) {
+            System.out.println("Error: Input tensor size " + input.shape[input.dims() - 1] + " mismatch layer input size " + inputSize);
         }
 
         //将输入数据扩展以便于与权重偏置矩阵相乘

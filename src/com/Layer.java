@@ -1,6 +1,9 @@
 package com;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 /**
@@ -46,7 +49,6 @@ public abstract class Layer extends Module {
      * @return 是否读取成功
      */
     public boolean readParameters(String filePath) {
-
         String encoding = "UTF-8"; //已知文件编码
         File file = new File(filePath);
         if (!file.exists()) {

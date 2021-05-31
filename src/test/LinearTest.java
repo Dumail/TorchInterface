@@ -3,8 +3,6 @@ package test;
 import com.Linear;
 import com.Tensor;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class LinearTest {
     Linear linear;
 
@@ -21,7 +19,12 @@ class LinearTest {
     @org.junit.jupiter.api.Test
     void forward() {
         Tensor input = new Tensor(new float[][]{{1, 2, 3}, {3, 4, 5}});
-        Tensor parameters = new Tensor(3, 3);
+        System.out.println("Forward result: " + linear.forward(input) + "\n");
+    }
+
+    @org.junit.jupiter.api.Test
+    void forward3D() {
+        Tensor input = new Tensor(new float[][][]{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}, {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}});
         System.out.println("Forward result: " + linear.forward(input) + "\n");
     }
 

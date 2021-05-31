@@ -163,11 +163,19 @@ public class Tensor {
     /**
      * 改变张量形状
      *
-     * @param shape 新的数据形状
+     * @param shape 新的数据形状，-1表示该维度形状自动计算，最多只能有一个-1
      * @return 是否改变成功
      */
     public boolean reshape(int[] shape) {
-        if (Util.prod(shape) != data.length) {
+        int length = Util.prod(shape); //给定形状总长度
+        for (int i = 0; i < shape.length; i++)
+            if (shape[i] == -1) {
+                //自动计算为给定的维度形状，这种情况下length为负
+                length = -length;
+                shape[i] = data.length / length;
+            }
+
+        if (length != data.length) {
             System.out.println("Error: Data size " + data.length + " can not reshape to " + Arrays.toString(shape) + "!");
             return false;
         }
@@ -517,7 +525,7 @@ public class Tensor {
 
     //广播加法
     public void add(float input) {
-        for(int i=0;i<this.data.length;i++)
-            this.data[i]+=input;
+        for (int i = 0; i < this.data.length; i++)
+            this.data[i] += input;
     }
 }

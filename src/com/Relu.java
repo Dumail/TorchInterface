@@ -3,7 +3,7 @@ package com;
 /*
 Relu Layer
  */
-public class Relu extends Layer {
+public class Relu extends Module {
 
     public Relu(int inputSize, int outputSize) {
         super(inputSize, outputSize);

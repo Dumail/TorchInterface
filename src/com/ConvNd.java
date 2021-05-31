@@ -35,7 +35,7 @@ public abstract class ConvNd extends Layer {
             this.step = new int[dim];
             Arrays.fill(this.step, 1);
         }
-        this.bias = new float[dim];
+        this.bias = new float[outputSize];
         //TODO 随机初始化
     }
 
