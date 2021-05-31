@@ -14,7 +14,7 @@ class Conv2DTest {
 
     @BeforeEach
     void setUp() {
-        conv = new Conv2D(1, 2, new int[]{2, 2});
+        conv = new Conv2D(2, 2, new int[]{2, 2});
     }
 
     @AfterEach
@@ -24,8 +24,13 @@ class Conv2DTest {
 
     @Test
     void forward() {
-        Tensor input = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
+        Tensor input = new Tensor(new float[][][]{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}});
         Tensor output = conv.forward(input);
         System.out.println("Result: " + output);
+    }
+
+    @Test
+    void readParameters(){
+        assert conv.readParameters("src/test/test_pars_conv2D.pt");
     }
 }

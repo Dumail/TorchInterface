@@ -32,10 +32,11 @@ public abstract class Layer extends Module {
      *
      * @param tuple 字符串表示的参数
      */
-    public void loadParameters(ParametersTuple tuple) {
+    protected boolean loadParameters(ParametersTuple tuple) {
         System.out.println("These parameters want to set, but this layer has no parameters:");
         System.out.println(parameters);
         System.out.println();
+        return false;
     }
 
     /**
@@ -45,10 +46,13 @@ public abstract class Layer extends Module {
      * @return 是否读取成功
      */
     public boolean readParameters(String filePath) {
-        ParametersTuple tuple = new ParametersTuple();
 
         String encoding = "UTF-8"; //已知文件编码
         File file = new File(filePath);
+        if (!file.exists()) {
+            System.out.println("Error: Open file failed.");
+            return false;
+        }
         long fileLength = file.length();
         //先全部读入字节流再一次性进行编码转换
         byte[] fileContent = new byte[(int) fileLength];
@@ -64,13 +68,30 @@ public abstract class Layer extends Module {
         String paramStr;
         try {
 //            this.loadParameters(new String(fileContent, encoding));
-            paramStr=new String(fileContent,encoding);
+            paramStr = new String(fileContent, encoding);
         } catch (UnsupportedEncodingException e) {
             System.err.println("The OS does not support " + encoding);
             e.printStackTrace();
             return false;
         }
 
+        ParametersTuple tuple;
+        if ((tuple = paramStrProcess(paramStr)) == null) {
+            System.out.println("Error: Something wrong when covert str to params.");
+            return false;
+        }
+        return loadParameters(tuple);
+    }
+
+    /**
+     * 处理参数字符串得到参数元祖。
+     * 对于单个网络层，可以将参数文件中所有字符串用该方法处理
+     * 对于多层网络，需要将各层的参数字符串分别用该方法处理
+     * @param paramStr 字符串形式的参数
+     * @return 元组形式的参数
+     */
+    protected ParametersTuple paramStrProcess(String paramStr) {
+        ParametersTuple tuple = new ParametersTuple();
         String[] listParameters = paramStr.split("\n");
         int[] weight_shape, bias_shape;
         float[] weight, bias;
@@ -78,7 +99,7 @@ public abstract class Layer extends Module {
             //得到权重形状数组
             weight_shape = Arrays.stream(listParameters[0].substring(1, listParameters[0].length() - 1).replace(" ", "").split(",")).mapToInt(Integer::parseInt).toArray();
             //得到权重数组
-            String[] weight_str = listParameters[1].substring(1, listParameters[1].length() - 1).trim().replace("  ", " ").split(" ");
+            String[] weight_str = listParameters[1].trim().split(",");
             weight = new float[weight_str.length];
             for (int i = 0; i < weight_str.length; i++) {
                 weight[i] = Float.parseFloat(weight_str[i]);
@@ -87,42 +108,33 @@ public abstract class Layer extends Module {
             //得到偏置形状数组
             bias_shape = Arrays.stream(listParameters[3].substring(1, listParameters[3].length() - 1).replace(" ", "").split(",")).mapToInt(Integer::parseInt).toArray();
             //得到偏置数组
-            String[] bias_str = listParameters[4].substring(1, listParameters[4].length() - 1).trim().replace("  ", " ").split(" ");
+            String[] bias_str = listParameters[4].trim().split(",");
             bias = new float[bias_str.length];
             for (int i = 0; i < bias_str.length; i++) {
                 bias[i] = Float.parseFloat(bias_str[i]);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
 
-        if (weight_shape[1] != inputSize || outputSize != weight_shape[0]) {
-            System.out.println("Error: weight " + Arrays.toString(weight_shape) + " mismatch input size " + this.inputSize + " or output size " + this.outputSize);
-            return false;
-        }
-
-        if (weight_shape[0] != bias_shape[0]) {
-            System.out.println("Error: weight " + Arrays.toString(weight_shape) + " mismatch bias " + Arrays.toString(bias_shape));
-            return false;
-        }
-        
-        tuple.setParameters(weight_shape,bias_shape,weight,bias);
-        loadParameters(tuple);
-        return true;
+        tuple.setParameters(weight_shape, bias_shape, weight, bias);
+        return tuple;
     }
 }
 
+/**
+ * 参数元祖，用于方便参数返回
+ */
 class ParametersTuple {
-    float[] weight, bias;
-    int[] weight_shape, bias_shape;
+    float[] weight, bias; //实际参数
+    int[] weight_shape, bias_shape; //权重和偏置的形状
 
-    public void setParameters(int[] weight_shape,int[] bias_shape,float[] weight,float[] bias)
-    {
-        this.weight_shape=weight_shape;
-        this.bias_shape=bias_shape;
-        this.weight=weight;
-        this.bias=bias;
+    public void setParameters(int[] weight_shape, int[] bias_shape, float[] weight, float[] bias) {
+        this.weight_shape = weight_shape;
+        this.bias_shape = bias_shape;
+        this.weight = weight;
+        this.bias = bias;
     }
 
     public float[] getWeight() {

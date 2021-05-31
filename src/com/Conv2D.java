@@ -1,5 +1,7 @@
 package com;
 
+import java.util.Arrays;
+
 public class Conv2D extends ConvNd {
 
     /**
@@ -58,7 +60,7 @@ public class Conv2D extends ConvNd {
                     float sum = 0;
                     for (int c = 0; c < channel; c++) {
                         for (int kh = 0; kh < kernelSize[0]; kh++) {
-                            for (int kw = 0; kw <kernelSize[1]; kw++) {
+                            for (int kw = 0; kw < kernelSize[1]; kw++) {
                                 sum += inputData[c][h * this.step[0] + kh][w * this.step[1] + kw] * kernelData[o][c][kh][kw];
                             }
                         }
@@ -79,6 +81,34 @@ public class Conv2D extends ConvNd {
     }
 
     @Override
-    public void loadParameters(ParametersTuple tuple) {
+    protected boolean loadParameters(ParametersTuple tuple) {
+        int[] weight_shape = tuple.getWeight_shape();
+        int[] bias_shape = tuple.getBias_shape();
+        float[] weight = tuple.getWeight();
+        float[] bias = tuple.getBias();
+
+        //卷积核参数需要是四维的
+        if (weight_shape.length != 4) {
+            System.out.println("Error: Weight of conv2D must be 4 dimension, but this weight dimension is " + weight_shape.length);
+            return false;
+        }
+        if (weight_shape[0] != outputSize || weight_shape[1] != inputSize || weight_shape[2] != kernelSize[0] || weight_shape[3] != kernelSize[1]) {
+            System.out.println("Error: Parameters of this file " + Arrays.toString(weight_shape) + " mismatch this conv2D layer.");
+            return false;
+        }
+        if (bias_shape[0] != outputSize) {
+            System.out.println("Error: Bias number of this file " + bias_shape[0] + " mismatch this layer's output size " + outputSize);
+            return false;
+        }
+
+        //复制参数
+        int length = Util.prod(weight_shape);
+        float[] weightData = new float[length];
+        System.arraycopy(weight, 0, weightData, 0, length);
+        System.arraycopy(bias, 0, this.bias, 0, bias_shape[0]);
+
+        this.bias = bias;
+        setParameters(weightData);
+        return true;
     }
 }

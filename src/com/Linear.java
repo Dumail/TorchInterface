@@ -35,15 +35,26 @@ public class Linear extends Layer {
     }
 
     @Override
-    public void loadParameters(ParametersTuple tuple) {
+    protected boolean loadParameters(ParametersTuple tuple) {
         int[] weight_shape=tuple.getWeight_shape();
         int[] bias_shape=tuple.getBias_shape(); 
         float[] weight= tuple.getWeight();
         float[] bias= tuple.getBias();
 
+        if (weight_shape[1] != inputSize || outputSize != weight_shape[0]) {
+            System.out.println("Error: weight " + Arrays.toString(weight_shape) + " mismatch input size " + this.inputSize + " or output size " + this.outputSize);
+            return false;
+        }
+
+        if (weight_shape[0] != bias_shape[0]) {
+            System.out.println("Error: weight " + Arrays.toString(weight_shape) + " mismatch bias " + Arrays.toString(bias_shape));
+            return false;
+        }
+
         float[] parameters = new float[weight_shape[0] * (weight_shape[1] + 1)];
         System.arraycopy(weight, 0, parameters, 0, weight_shape[0] * weight_shape[1]);
         System.arraycopy(bias, 0, parameters, weight_shape[0] * weight_shape[1], bias_shape[0]);
         setParameters(parameters);
+        return true;
     }
 }

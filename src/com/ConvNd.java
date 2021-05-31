@@ -7,11 +7,11 @@ import java.util.Arrays;
  * 卷积层
  */
 public abstract class ConvNd extends Layer {
-    int[] kernelSize;//卷积核大小
-    int[] padding; //填充
-    int[] step;//步长
-    String paddingType = "zero"; //填充类型，补零
-    float[] bias;
+    protected int[] kernelSize;//卷积核大小
+    protected int[] padding; //填充
+    protected int[] step;//步长
+    protected String paddingType = "zero"; //填充类型，补零
+    protected float[] bias;
 
     /**
      * 卷积层构造函数
@@ -35,14 +35,13 @@ public abstract class ConvNd extends Layer {
             this.step = new int[dim];
             Arrays.fill(this.step, 1);
         }
-        this.bias=new float[dim];
+        this.bias = new float[dim];
         //TODO 随机初始化
     }
 
 
-
     @Override
     public String toString() {
-        return super.toString() + "Conv: \n input size: " + inputSize + ", output size: " + outputSize + "\n  kernel size: " + Arrays.toString(this.kernelSize) + "\n  padding: " + Arrays.toString(this.padding) + "\n  step: " + Arrays.toString(this.step) + " \n  parameters:" + this.parameters;
+        return super.toString() + "Conv: \n input size: " + inputSize + ", output size: " + outputSize + "\n  kernel size: " + Arrays.toString(this.kernelSize) + "\n  padding: " + Arrays.toString(this.padding) + "\n  step: " + Arrays.toString(this.step) + "\n  weight:" + this.parameters + "\n  bias: " + Arrays.toString(this.bias);
     }
 }
