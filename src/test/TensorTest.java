@@ -10,7 +10,7 @@ class TensorTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        float[][] data = new float[][]{{1, 1, 1}, {1, 1, 1}};
+        float[][] data = new float[][]{{1, 2, 3}, {4, 5, 6}};
         tensor = new Tensor(data);
     }
 
@@ -100,6 +100,13 @@ class TensorTest {
         Tensor tensorTest = new Tensor(new float[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 10}});
         System.out.println("original : " + tensorTest);
         Tensor tensorGetData = tensorTest.getData("[:,:1]");
-        System.out.println("result : " + tensorGetData);
+        System.out.println("result: " + tensorGetData);
+    }
+
+    @org.junit.jupiter.api.Test
+    void T() {
+        Tensor tensor3D = new Tensor(new float[][][]{{{1, 2, 3}, {1, 2, 3}}, {{1, 2, 3}, {1, 2, 3}}});
+        System.out.println("Before: " + tensor3D);
+        System.out.println("After: " + tensor3D.T());
     }
 }

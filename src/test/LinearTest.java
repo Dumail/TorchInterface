@@ -18,7 +18,7 @@ class LinearTest {
 
     @org.junit.jupiter.api.Test
     void forward() {
-        Tensor input = new Tensor(new float[][]{{1, 2, 3}, {3, 4, 5}});
+        Tensor input = new Tensor(new float[][]{{1, 1, 1}, {1, 1, 1}});
         System.out.println("Forward result: " + linear.forward(input) + "\n");
     }
 
@@ -31,7 +31,7 @@ class LinearTest {
     @org.junit.jupiter.api.Test
     void readParameters() {
         assert linear.readParameters("src/test/test_pars_linear.pt");
-        Tensor input = new Tensor(new float[][]{{1, 1, 2}});
+        Tensor input = new Tensor(new float[][]{{1, 1, 1}});
         System.out.println("Forward result: " + linear.forward(input) + "\n");
     }
 }
