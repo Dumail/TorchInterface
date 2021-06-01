@@ -64,4 +64,11 @@ public class AveragePool extends Pool {
 //        在Tensorflow中池化（包括平均池化和最大池化）时如果有填充像素，是不考虑填充像素的，也就是说最大池化的时候如果有填充，实际上填充的是-inf（负无穷），-1当然比负无穷大咯。
 //        Tensorflow中池化层如果有填充，不考虑填充像素的数值。
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "-->AveragePool{" +
+                "paddings='" + paddings + '\'' +
+                '}';
+    }
 }

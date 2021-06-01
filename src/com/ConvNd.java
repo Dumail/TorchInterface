@@ -42,6 +42,6 @@ public abstract class ConvNd extends Layer {
 
     @Override
     public String toString() {
-        return super.toString() + "Conv: \n input size: " + inputSize + ", output size: " + outputSize + "\n  kernel size: " + Arrays.toString(this.kernelSize) + "\n  padding: " + Arrays.toString(this.padding) + "\n  step: " + Arrays.toString(this.step) + "\n  weight:" + this.parameters + "\n  bias: " + Arrays.toString(this.bias);
+        return super.toString() + "-->Conv: \n input size: " + inputSize + ", output size: " + outputSize + "\n  kernel size: " + Arrays.toString(this.kernelSize) + "\n  padding: " + Arrays.toString(this.padding) + "\n  step: " + Arrays.toString(this.step) + "\n  weight:" + this.parameters + "\n  bias: " + Arrays.toString(this.bias);
     }
 }

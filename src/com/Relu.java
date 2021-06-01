@@ -5,8 +5,8 @@ Relu Layer
  */
 public class Relu extends Module {
 
-    public Relu(int inputSize, int outputSize) {
-        super(inputSize, outputSize);
+    public Relu() {
+        super(0, 0);
     }
 
     @Override
@@ -16,4 +16,8 @@ public class Relu extends Module {
         return tensor;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "-->Relu Module.";
+    }
 }

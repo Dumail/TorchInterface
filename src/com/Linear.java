@@ -31,7 +31,7 @@ public class Linear extends Layer {
 
     @Override
     public String toString() {
-        return super.toString() + "Linear: \n input size: " + inputSize + ", output size: " + outputSize + "\n parameters:" + this.parameters;
+        return super.toString() + "-->Linear: \n input size: " + inputSize + ", output size: " + outputSize + "\n parameters:" + this.parameters;
     }
 
     @Override

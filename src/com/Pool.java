@@ -2,7 +2,7 @@ package com;
 
 import java.util.Arrays;
 
-public class Pool extends Layer {
+public abstract class Pool extends Layer {
     int[] kernelSize;//卷积核大小
     int[] padding = new int[]{0, 0}; //填充
     int[] step = new int[]{1, 1};//步长
@@ -48,9 +48,13 @@ public class Pool extends Layer {
     }
 
     @Override
-    public Tensor forward(Tensor input) {
-
-        return null;
+    public String toString() {
+        return super.toString() + "-->Pool{" +
+                "kernelSize=" + Arrays.toString(kernelSize) +
+                ", padding=" + Arrays.toString(padding) +
+                ", step=" + Arrays.toString(step) +
+                ", paddingType='" + paddingType + '\'' +
+                '}';
     }
 }
 
