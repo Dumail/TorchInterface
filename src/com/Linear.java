@@ -9,7 +9,7 @@ public class Linear extends Layer {
     public Linear(int inputSize, int outputSize) {
         super(inputSize, outputSize);
         //矩阵形式，输入节点数x输出节点数，+1是由于将偏置也写入了矩阵
-        parameters = new Tensor(inputSize + 1, outputSize);
+        parameters = new Tensor(outputSize, inputSize + 1);
         parameters.randomData(); //随机初始化权重
     }
 
@@ -26,7 +26,7 @@ public class Linear extends Layer {
         if (!input.expand(inputShape, 1))
             return null;
 
-        return input.multi(parameters);
+        return input.multi(parameters.T());
     }
 
     @Override
@@ -52,8 +52,13 @@ public class Linear extends Layer {
         }
 
         float[] parameters = new float[weight_shape[0] * (weight_shape[1] + 1)];
-        System.arraycopy(weight, 0, parameters, 0, weight_shape[0] * weight_shape[1]);
-        System.arraycopy(bias, 0, parameters, weight_shape[0] * weight_shape[1], bias_shape[0]);
+        for (int i = 0; i < weight_shape[0]; i++) {
+            //parameters比weight多一“列”
+            System.arraycopy(weight, i * weight_shape[1], parameters, i * (weight_shape[1] + 1), weight_shape[1]);
+            parameters[i * (weight_shape[1] + 1) + weight_shape[1]] = bias[i];
+        }
+//        System.arraycopy(weight, 0, parameters, 0, weight_shape[0] * weight_shape[1]);
+//        System.arraycopy(bias, 0, parameters, weight_shape[0] * weight_shape[1], bias_shape[0]);
         setParameters(parameters);
         return true;
     }

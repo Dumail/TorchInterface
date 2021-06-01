@@ -68,7 +68,7 @@ public class Tensor {
         this.data = new float[data.length * data[0].length * data[0][0].length];
         for (int i = 0; i < data.length; i++)
             for (int j = 0; j < data[0].length; j++)
-                System.arraycopy(data[i][j], 0, this.data, i * data[0].length * data[0][0].length + j * data[0].length, data[0][0].length);
+                System.arraycopy(data[i][j], 0, this.data, i * data[0].length * data[0][0].length + j * data[0][0].length, data[0][0].length);
         this.shape = new int[]{data.length, data[0].length, data[0][0].length};
     }
 
@@ -181,6 +181,30 @@ public class Tensor {
         }
         this.shape = shape;
         return true;
+    }
+
+    /**
+     * 转置
+     *
+     * @return 转置后的张量
+     */
+    public Tensor T() {
+        int length1 = this.shape[dims() - 1];//最后一维形状
+        int length2 = this.shape[dims() - 2];//倒数第二维形状
+        int otherLength = Util.prod(this.shape) / length1 / length2;//其他维的形状
+        float[] tempData = new float[otherLength * length2 * length1];
+        for (int n = 0; n < otherLength; n++)
+            //对于高纬度保持不变
+            for (int i = 0; i < length2; i++)
+                for (int j = 0; j < length1; j++) {
+                    tempData[n * length1 * length2 + j * length2 + i] = this.data[n * length1 * length2 + i * length1 + j];
+                }
+        int[] tempShape = Arrays.copyOf(this.shape, this.shape.length);
+        tempShape[dims() - 2] = length1;
+        tempShape[dims() - 1] = length2;
+        Tensor tempTensor = new Tensor(tempData);
+        tempTensor.reshape(tempShape);
+        return tempTensor;
     }
 
     /**
