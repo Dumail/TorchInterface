@@ -23,6 +23,7 @@ public class Main {
         Tensor input = Util.rangeTensor(0, 4 * 5 * 5);
         if (input.reshape(new int[]{4, 5, 5}))
             System.out.println(input);
+        net.readParameters("src/test/pars.pt");
         System.out.println(net.forward(input));
     }
 }

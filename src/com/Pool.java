@@ -2,7 +2,7 @@ package com;
 
 import java.util.Arrays;
 
-public abstract class Pool extends Layer {
+public abstract class Pool extends Module {
     int[] kernelSize;//卷积核大小
     int[] padding = new int[]{0, 0}; //填充
     int[] step = new int[]{1, 1};//步长

@@ -2,6 +2,7 @@ package test;
 
 import com.Conv2D;
 import com.Tensor;
+import com.Util;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,14 +23,19 @@ class Conv2DTest {
 
     @Test
     void forward() {
-        Tensor input = new Tensor(new float[][][]{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}});
+        Tensor input = Util.onesTensor(new int[]{2, 3, 3});
+        conv.setParameters(Util.onesTensor(new int[]{2, 2, 2, 2}));
         Tensor output = conv.forward(input);
         System.out.println("Result: " + output);
     }
 
 
     @Test
-    void readParameters(){
+    void readParameters() {
         assert conv.readParameters("src/test/test_pars_conv2D.pt");
+        Tensor input = Util.onesTensor(new int[]{2, 3, 3});
+        System.out.println(input);
+        Tensor output = conv.forward(input);
+        System.out.println("Result: " + output);
     }
 }

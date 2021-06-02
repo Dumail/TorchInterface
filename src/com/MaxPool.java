@@ -1,8 +1,6 @@
 package com;
 
 
-import java.util.Arrays;
-
 /**
  * @program: TorchInterface
  * @description:
@@ -18,7 +16,7 @@ public class MaxPool extends Pool {
      */
     public MaxPool(int[]... args) {
         super(args);
-        System.out.println("args is  " + Arrays.deepToString(args));
+//        System.out.println("args is  " + Arrays.deepToString(args));
     }
 
 //    先根据输入feature的宽高和步长来计算输出的宽高,然后计算需要填充的尺寸,最后计算四个边分别填充的尺寸，填充顺序是优先填充右下，然后填充左上，可以非对称填充

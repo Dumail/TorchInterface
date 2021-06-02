@@ -116,4 +116,9 @@ class TensorTest {
         System.out.println(Util.onesTensor(new int[]{3, 2}));
         System.out.println(Util.rangeTensor(-2, 8));
     }
+
+    @org.junit.jupiter.api.Test
+    void add() {
+        tensor.add(new float[]{1, 3});
+    }
 }

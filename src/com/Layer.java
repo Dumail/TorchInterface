@@ -36,7 +36,7 @@ public abstract class Layer extends Module {
      * @param tuple 字符串表示的参数
      */
     protected boolean loadParameters(ParametersTuple tuple) {
-        System.out.println("These parameters want to set, but this layer has no parameters:");
+        System.out.println("Error" + Util.getPos() + "These parameters want to set, but this layer has no parameter!");
         System.out.println(parameters);
         System.out.println();
         return false;
@@ -89,6 +89,7 @@ public abstract class Layer extends Module {
      * 处理参数字符串得到参数元祖。
      * 对于单个网络层，可以将参数文件中所有字符串用该方法处理
      * 对于多层网络，需要将各层的参数字符串分别用该方法处理
+     *
      * @param paramStr 字符串形式的参数
      * @return 元组形式的参数
      */

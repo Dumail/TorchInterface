@@ -554,9 +554,27 @@ public class Tensor {
         return result;
     }
 
-    //广播加法
+    /**
+     * 广播加法，张量的所有数据都加上一个数
+     *
+     * @param input 加数
+     */
     public void add(float input) {
         for (int i = 0; i < this.data.length; i++)
             this.data[i] += input;
+    }
+
+    /**
+     * 广播加法，张量加上一个浮点数组，则第一维中每个张量的数据都加上数组中对应的数
+     *
+     * @param input 加数数组
+     */
+    public void add(float[] input) {
+        if (input.length != this.shape[0])
+            System.out.println("Error" + Util.getPos() + "length of input " + input.length + " mismatch tensor shape " + Arrays.toString(this.shape) + " for adding.");
+        int otherLength = Util.prod(this.shape) / this.shape[0]; //除了第一维的其他维长度
+        for (int i = 0; i < input.length; i++)
+            for (int j = 0; j < otherLength; j++)
+                this.data[i * otherLength + j] += input[i];
     }
 }

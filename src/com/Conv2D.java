@@ -51,7 +51,7 @@ public class Conv2D extends ConvNd {
         //输入数据填充 TODO 其他填充类型
         for (int i = 0; i < channel; i++)
             for (int j = this.padding[0]; j < inputHeight; j++)
-                System.arraycopy(inputDataRaw[i][j], 0, inputData[0][j], this.padding[1], inputDataRaw[i].length);
+                System.arraycopy(inputDataRaw[i][j], 0, inputData[i][j], this.padding[1], inputDataRaw[i].length);
 
         //卷积操作 TODO 复杂度更低的算法
         for (int o = 0; o < outputSize; o++) {
@@ -73,7 +73,7 @@ public class Conv2D extends ConvNd {
         Tensor outTensor = new Tensor(outData);
 
         //加上偏置
-        for (float bia : this.bias) outTensor.add(bia);
+        outTensor.add(this.bias);
 
         //去掉多余维度，以方便其他层（例如全连接）计算
         outTensor.squeeze();

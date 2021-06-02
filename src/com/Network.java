@@ -32,7 +32,7 @@ public abstract class Network extends Module {
     public Tensor forward(Tensor input) {
         Tensor tempTensor = input;
         //逐层进行前向传播
-        for (int i = 0; i < modules.length - 1; i++) {
+        for (int i = 0; i < modules.length; i++) {
             if (tempTensor == null) {
                 System.out.println("Error" + Util.getPos() + " Some thing wrong when forward at layer " + (i - 1));
                 return null;
