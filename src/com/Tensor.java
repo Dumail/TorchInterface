@@ -182,7 +182,7 @@ public class Tensor {
                 shape[i] = data.length / length;
             }
 
-        if (length != data.length) {
+        if (Util.prod(shape) != data.length) {
             System.out.println("Error" + Util.getPos() + " Data size " + data.length + " can not reshape to " + Arrays.toString(shape) + "!");
             return false;
         }
