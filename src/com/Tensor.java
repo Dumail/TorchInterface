@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 /*
 神经网络基本数据类型：张量
@@ -555,26 +556,44 @@ public class Tensor {
     }
 
     /**
+     * 广播操作，对所有元素执行同一操作
+     *
+     * @param func 执行的函数
+     */
+    public void broadcast(Function<Float, Float> func) {
+        for (int i = 0; i < this.data.length; i++)
+            this.data[i] = func.apply(this.data[i]);
+    }
+
+    /**
      * 广播加法，张量的所有数据都加上一个数
      *
-     * @param input 加数
+     * @param value 加数
      */
-    public void add(float input) {
-        for (int i = 0; i < this.data.length; i++)
-            this.data[i] += input;
+    public void add(float value) {
+        broadcast((x) -> x + value);
+    }
+
+    /**
+     * 广播操作，张量所有数据乘一个数
+     *
+     * @param value 乘数
+     */
+    public void multi(float value) {
+        broadcast((x) -> x * value);
     }
 
     /**
      * 广播加法，张量加上一个浮点数组，则第一维中每个张量的数据都加上数组中对应的数
      *
-     * @param input 加数数组
+     * @param value 加数数组
      */
-    public void add(float[] input) {
-        if (input.length != this.shape[0])
-            System.out.println("Error" + Util.getPos() + "length of input " + input.length + " mismatch tensor shape " + Arrays.toString(this.shape) + " for adding.");
+    public void add(float[] value) {
+        if (value.length != this.shape[0])
+            System.out.println("Error" + Util.getPos() + "length of input " + value.length + " mismatch tensor shape " + Arrays.toString(this.shape) + " for adding.");
         int otherLength = Util.prod(this.shape) / this.shape[0]; //除了第一维的其他维长度
-        for (int i = 0; i < input.length; i++)
+        for (int i = 0; i < value.length; i++)
             for (int j = 0; j < otherLength; j++)
-                this.data[i * otherLength + j] += input[i];
+                this.data[i * otherLength + j] += value[i];
     }
 }

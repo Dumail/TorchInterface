@@ -121,4 +121,9 @@ class TensorTest {
     void add() {
         tensor.add(new float[]{1, 3});
     }
+
+    @org.junit.jupiter.api.Test
+    void multiFloat() {
+        tensor.multi(10);
+    }
 }
