@@ -29,12 +29,20 @@ public abstract class Network extends Module {
      * @param input 输入张量
      * @return 结果张量
      */
-    public abstract Tensor forward(Tensor input);
-//        Tensor tempTensor = input;
-//        for (Module layer : modules)
-//            tempTensor = layer.forward(tempTensor);
-//        return tempTensor;
-//    }
+    public Tensor forward(Tensor input) {
+        Tensor tempTensor = input;
+        //逐层进行前向传播
+        for (int i = 0; i < modules.length - 1; i++) {
+            //对于其他层和全链接层的连接处，自动进行形状转换
+            if (modules[i] instanceof Linear && (tempTensor.dims() != 2 || tempTensor.shape[1] != modules[i].inputSize))
+                if (input.reshape(new int[]{-1, modules[i].inputSize})) {
+                    System.out.println("Error: input tensor shape " + Arrays.toString(tempTensor.shape) + " of linear mismatch input size " + modules[i].inputSize + " of layer " + i);
+                    return null;
+                }
+            tempTensor = modules[i].forward(tempTensor);
+        }
+        return tempTensor;
+    }
 
     /**
      * 从文件载入网络网络层参数

@@ -21,13 +21,6 @@ class NetworkTest {
                     new Linear(12, 2),
             };
         }
-
-        @Override
-        public Tensor forward(Tensor input) {
-            Tensor tempTensor = this.modules[0].forward(input);
-            tempTensor.reshape(new int[]{-1, 12});
-            return this.modules[1].forward(tempTensor);
-        }
     }
 
     Network net;
