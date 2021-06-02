@@ -33,10 +33,14 @@ public abstract class Network extends Module {
         Tensor tempTensor = input;
         //逐层进行前向传播
         for (int i = 0; i < modules.length - 1; i++) {
+            if (tempTensor == null) {
+                System.out.println("Error" + Util.getPos() + " Some thing wrong when forward at layer " + (i - 1));
+                return null;
+            }
             //对于其他层和全链接层的连接处，自动进行形状转换
             if (modules[i] instanceof Linear && (tempTensor.dims() != 2 || tempTensor.shape[1] != modules[i].inputSize))
                 if (input.reshape(new int[]{-1, modules[i].inputSize})) {
-                    System.out.println("Error: input tensor shape " + Arrays.toString(tempTensor.shape) + " of linear mismatch input size " + modules[i].inputSize + " of layer " + i);
+                    System.out.println("Error" + Util.getPos() + " input tensor shape " + Arrays.toString(tempTensor.shape) + " of linear mismatch input size " + modules[i].inputSize + " of layer " + i);
                     return null;
                 }
             tempTensor = modules[i].forward(tempTensor);
@@ -82,7 +86,7 @@ public abstract class Network extends Module {
             //设置每个Layer的参数
             ParametersTuple tuple;
             if ((tuple = ((Layer) modules[i]).paramStrProcess(buffer.toString())) == null) {
-                System.out.println("Error: Something wrong when covert str to params at layer " + i);
+                System.out.println("Error" + Util.getPos() + " Something wrong when covert str to params at layer " + i);
                 return false;
             }
             ((Layer) modules[i]).loadParameters(tuple);

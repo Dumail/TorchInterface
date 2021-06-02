@@ -82,6 +82,13 @@ public class Tensor {
     }
 
     /**
+     * 将数据全设为1
+     */
+    public void onesData() {
+        Arrays.fill(this.data, 1);
+    }
+
+    /**
      * 索引指定位置的值
      *
      * @param index 索引，需要与张量的维度一样
@@ -90,7 +97,7 @@ public class Tensor {
     public float getOfIndex(int... index) {
         //只能一次索引一个值，且不能省略0
         if (this.dims() != index.length) {
-            System.out.println("Warning: index shape " + this.dims() + " mismatch data shape " + index.length);
+            System.out.println("Warning" + Util.getPos() + ": index shape " + this.dims() + " mismatch data shape " + index.length);
             return -1;
         }
         int pos = 0; //总的位置下标
@@ -110,7 +117,7 @@ public class Tensor {
         //TODO 任意维度切片
         //二维切片
         if (this.dims() > 2) {
-            System.out.println("Error: Current version does not support high dim.");
+            System.out.println("Error" + Util.getPos() + " Current version does not support high dim.");
             return null;
         }
 
@@ -122,11 +129,11 @@ public class Tensor {
         rowEnd = rowEnd < 0 ? this.shape[0] + rowEnd : Math.min(rowEnd, this.shape[0]);
         //处理后的值不能小于0
         if (rowStart < 0 || rowEnd < 0) {
-            System.out.println("Error: index out of low bound.");
+            System.out.println("Error" + Util.getPos() + " index out of low bound.");
             return null;
         }
         if (rowStart > rowEnd) {
-            System.out.println("Error: Start index must smaller than end index.");
+            System.out.println("Error" + Util.getPos() + " Start index must smaller than end index.");
             return null;
             //TODO 反向切片
         }
@@ -146,11 +153,11 @@ public class Tensor {
         colEnd = colEnd < 0 ? this.shape[1] + colEnd : Math.min(colEnd, this.shape[1]);
         //处理后的值不能小于0
         if (colStart < 0 || colEnd < 0) {
-            System.out.println("Error: index out of low bound.");
+            System.out.println("Error" + Util.getPos() + " index out of low bound.");
             return null;
         }
         if (colStart > colEnd) {
-            System.out.println("Error: Start index must smaller than end index.");
+            System.out.println("Error" + Util.getPos() + " Start index must smaller than end index.");
             return null;
         }
 
@@ -176,7 +183,7 @@ public class Tensor {
             }
 
         if (length != data.length) {
-            System.out.println("Error: Data size " + data.length + " can not reshape to " + Arrays.toString(shape) + "!");
+            System.out.println("Error" + Util.getPos() + " Data size " + data.length + " can not reshape to " + Arrays.toString(shape) + "!");
             return false;
         }
         this.shape = shape;
@@ -236,7 +243,7 @@ public class Tensor {
     public boolean unSqueeze(int index) {
         index = index < 0 ? dims() + index + 1 : Math.min(index, this.shape[1]);
         if (index < 0 || index > dims()) {
-            System.out.println("Error: index must bigger than 0 and smaller than " + dims());
+            System.out.println("Error" + Util.getPos() + " index must bigger than 0 and smaller than " + dims());
             return false;
         }
         int[] tempShape = new int[dims() + 1];
@@ -259,12 +266,12 @@ public class Tensor {
      */
     public boolean expand(int[] shape, float pad) {
         if (dims() != this.dims()) {
-            System.out.println("Error: Shape dimension " + this.dims() + " mismatch " + dims());
+            System.out.println("Error" + Util.getPos() + " Shape dimension " + this.dims() + " mismatch " + dims());
             return false;
         }
         for (int i = 0; i < dims(); i++) {
             if (this.shape[i] > shape[i]) {
-                System.out.println("Error: Shape " + Arrays.toString(this.shape) + " can not be less than " + Arrays.toString(shape));
+                System.out.println("Error" + Util.getPos() + " Shape " + Arrays.toString(this.shape) + " can not be less than " + Arrays.toString(shape));
                 return false;
             }
         }
@@ -305,7 +312,7 @@ public class Tensor {
      */
     public float dot(Tensor input) {
         if (!Arrays.equals(this.shape, input.shape)) {
-            System.out.println("Error: shape " + Arrays.toString(this.shape) + " mismatch input shape " + Arrays.toString(input.shape));
+            System.out.println("Error" + Util.getPos() + " shape " + Arrays.toString(this.shape) + " mismatch input shape " + Arrays.toString(input.shape));
             return Float.MAX_VALUE;
         }
         float[] tempData = input.getData();
@@ -324,18 +331,18 @@ public class Tensor {
     public Tensor multi(Tensor input) {
         //相乘张量至少有两维
         if (this.dims() < 2 || input.dims() < 2) {
-            System.out.println("Error: Tensor dimension is too low.");
+            System.out.println("Error" + Util.getPos() + " Tensor dimension is too low.");
         }
         //两个张量维度需要相同
         if (this.dims() != input.dims()) {
-            System.out.println("Error: Dimension " + this.dims() + " mismatch " + input.dims());
+            System.out.println("Error" + Util.getPos() + " Dimension " + this.dims() + " mismatch " + input.dims());
             return null;
         }
 
         //高于二维的形状需要相同
         for (int i = 0; i < this.dims() - 2; i++) {
             if (this.shape[i] != input.shape[i]) {
-                System.out.println("Error: Multiplied this.shape " + Arrays.toString(shape) + " by this.shape " + Arrays.toString(input.shape));
+                System.out.println("Error" + Util.getPos() + " Multiplied this.shape " + Arrays.toString(shape) + " by this.shape " + Arrays.toString(input.shape));
                 return null;
             }
         }
@@ -348,7 +355,7 @@ public class Tensor {
 
         //相乘的两维行与列相同
         if (colOfMat1 != rowOfMat2) {
-            System.out.println("Error: Multiplied this.shape " + Arrays.toString(shape) + " by this.shape " + Arrays.toString(input.shape));
+            System.out.println("Error" + Util.getPos() + " Multiplied this.shape " + Arrays.toString(shape) + " by this.shape " + Arrays.toString(input.shape));
             return null;
         }
 
@@ -399,7 +406,7 @@ public class Tensor {
      */
     public float[][] getData2D() {
         if (this.dims() != 2) {
-            System.out.println("Error: Tensor dim is not 2.");
+            System.out.println("Error" + Util.getPos() + " Tensor dim is not 2.");
             return null;
         }
         float[][] tempData = new float[this.shape[0]][this.shape[1]];
@@ -415,7 +422,7 @@ public class Tensor {
      */
     public float[][][] getData3D() {
         if (this.dims() != 3) {
-            System.out.println("Error: Tensor dim is not 3");
+            System.out.println("Error" + Util.getPos() + " Tensor dim is not 3");
             return null;
         }
         float[][][] tempData = new float[this.shape[0]][this.shape[1]][this.shape[2]];
@@ -432,7 +439,7 @@ public class Tensor {
      */
     public float[][][][] getData4D() {
         if (this.dims() != 4) {
-            System.out.println("Error: Tensor dim is not 4");
+            System.out.println("Error" + Util.getPos() + " Tensor dim is not 4");
             return null;
         }
         float[][][][] tempData = new float[this.shape[0]][this.shape[1]][this.shape[2]][this.shape[3]];

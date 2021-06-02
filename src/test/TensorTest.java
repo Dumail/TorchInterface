@@ -1,6 +1,7 @@
 package test;
 
 import com.Tensor;
+import com.Util;
 import org.junit.jupiter.api.AfterEach;
 
 import java.util.Arrays;
@@ -108,5 +109,11 @@ class TensorTest {
         Tensor tensor3D = new Tensor(new float[][][]{{{1, 2, 3}, {1, 2, 3}}, {{1, 2, 3}, {1, 2, 3}}});
         System.out.println("Before: " + tensor3D);
         System.out.println("After: " + tensor3D.T());
+    }
+
+    @org.junit.jupiter.api.Test
+    void generate() {
+        System.out.println(Util.onesTensor(new int[]{3, 2}));
+        System.out.println(Util.rangeTensor(-2, 8));
     }
 }

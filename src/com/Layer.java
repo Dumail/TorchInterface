@@ -52,7 +52,7 @@ public abstract class Layer extends Module {
         String encoding = "UTF-8"; //已知文件编码
         File file = new File(filePath);
         if (!file.exists()) {
-            System.out.println("Error: Open file failed.");
+            System.out.println("Error" + Util.getPos() + " Open file failed.");
             return false;
         }
         long fileLength = file.length();
@@ -79,7 +79,7 @@ public abstract class Layer extends Module {
 
         ParametersTuple tuple;
         if ((tuple = paramStrProcess(paramStr)) == null) {
-            System.out.println("Error: Something wrong when covert str to params.");
+            System.out.println("Error" + Util.getPos() + " Something wrong when covert str to params.");
             return false;
         }
         return loadParameters(tuple);

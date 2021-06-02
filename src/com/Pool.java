@@ -17,7 +17,7 @@ public abstract class Pool extends Layer {
         super(0, 0);
 
         if (args.length == 0) {
-            System.out.println("Error: args must be  1 or 2." + Arrays.toString(args));
+            System.out.println("Error" + Util.getPos() + " args must be  1 or 2." + Arrays.toString(args));
             return;
         }
         int dim = args[0].length;  //卷积维度
@@ -26,7 +26,7 @@ public abstract class Pool extends Layer {
         } else if (dim == 2) {
             kernelSize = Arrays.copyOf(args[0], dim);
         } else
-            System.out.println("Error: args dim must be 1 or 2.");
+            System.out.println("Error" + Util.getPos() + " args dim must be 1 or 2.");
 
         if (args.length > 1) {  // padding 0 代表 Valid ，1 代表 Same
             padding = new int[]{0, 0};
@@ -43,7 +43,7 @@ public abstract class Pool extends Layer {
             else if (args[2].length == 2)
                 step =  Arrays.copyOf(args[2], args[2].length);
             else
-                System.out.println("Error: args step dim must be 1 or 2.");
+                System.out.println("Error" + Util.getPos() + " args step dim must be 1 or 2.");
         }
     }
 

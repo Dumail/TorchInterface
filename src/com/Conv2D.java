@@ -14,7 +14,7 @@ public class Conv2D extends ConvNd {
     public Conv2D(int inputSize, int outputSize, int[]... args) {
         super(inputSize, outputSize, args);
         if (args[0].length != 2)
-            System.out.println("Error: args dim must be 2.");
+            System.out.println("Error" + Util.getPos() + " args dim must be 2.");
 
         //卷积核参数矩阵, 第一维是卷积核个数，第二维是通道数与输入一致，第三第四维为自定义卷积核大小
         parameters = new Tensor(outputSize, inputSize, this.kernelSize[0], this.kernelSize[1]);
@@ -25,7 +25,7 @@ public class Conv2D extends ConvNd {
     public Tensor forward(Tensor input) {
         //二维卷积
         if (input.dims() != 2 && input.dims() != 3) {
-            System.out.println("Error: Current version does not support high dim to conv.");
+            System.out.println("Error" + Util.getPos() + " Current version does not support high dim to conv.");
             return null;
         }
 
@@ -33,7 +33,7 @@ public class Conv2D extends ConvNd {
             input.unSqueeze(0);
         int channel = input.shape[0];
         if (this.inputSize != channel) {
-            System.out.println("Error: input tensor channel " + channel + " mismatch this layer's input size " + inputSize);
+            System.out.println("Error" + Util.getPos() + " input tensor channel " + channel + " mismatch this layer's input size " + inputSize);
             return null;
         }
 
@@ -89,15 +89,15 @@ public class Conv2D extends ConvNd {
 
         //卷积核参数需要是四维的
         if (weight_shape.length != 4) {
-            System.out.println("Error: Weight of conv2D must be 4 dimension, but this weight dimension is " + weight_shape.length);
+            System.out.println("Error" + Util.getPos() + " Weight of conv2D must be 4 dimension, but this weight dimension is " + weight_shape.length);
             return false;
         }
         if (weight_shape[0] != outputSize || weight_shape[1] != inputSize || weight_shape[2] != kernelSize[0] || weight_shape[3] != kernelSize[1]) {
-            System.out.println("Error: Parameters of this file " + Arrays.toString(weight_shape) + " mismatch this conv2D layer.");
+            System.out.println("Error" + Util.getPos() + " Parameters of this file " + Arrays.toString(weight_shape) + " mismatch this conv2D layer.");
             return false;
         }
         if (bias_shape[0] != outputSize) {
-            System.out.println("Error: Bias number of this file " + bias_shape[0] + " mismatch this layer's output size " + outputSize);
+            System.out.println("Error" + Util.getPos() + " Bias number of this file " + bias_shape[0] + " mismatch this layer's output size " + outputSize);
             return false;
         }
 
