@@ -37,8 +37,7 @@ class TensorTest {
 
     @org.junit.jupiter.api.Test
     void reshape() {
-        if (tensor.reshape(new int[]{3, 2}))
-            System.out.println("Shape change successful.");
+        System.out.println("Reshape result:" + tensor.reshape(new int[]{3, 2}));
     }
 
     @org.junit.jupiter.api.Test

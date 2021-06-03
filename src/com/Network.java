@@ -39,8 +39,8 @@ public abstract class Network extends Module {
             }
             //对于其他层和全链接层的连接处，自动进行形状转换
             if (modules[i] instanceof Linear && (tempTensor.dims() != 2 || tempTensor.shape[1] != modules[i].inputSize))
-                if (!tempTensor.reshape(new int[]{-1, modules[i].inputSize})) {
-                    System.out.println("Error" + Util.getPos() + " input tensor shape " + Arrays.toString(tempTensor.shape) + " of linear mismatch input size " + modules[i].inputSize + " of layer " + i);
+                if ((tempTensor = tempTensor.reshape(new int[]{-1, modules[i].inputSize})) == null) {
+                    System.out.println("Error" + Util.getPos() + " input tensor shape of linear mismatch input size " + modules[i].inputSize + " of layer " + i);
                     return null;
                 }
             tempTensor = modules[i].forward(tempTensor);

@@ -20,9 +20,9 @@ public class Main {
 
     public static void main(String[] args) {
         MyNet net = new MyNet(4, 1);
-        Tensor input = Util.rangeTensor(0, 4 * 5 * 5);
-        if (input.reshape(new int[]{4, 5, 5}))
-            System.out.println(input);
+        Tensor input = Util.rangeTensor(0, 4 * 5 * 5).reshape(new int[]{4, 5, 5});
+        System.out.println();
+        System.out.println(input);
         net.readParameters("src/test/pars.pt");
         System.out.println(net.forward(input));
     }

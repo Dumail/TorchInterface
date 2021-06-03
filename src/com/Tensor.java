@@ -37,6 +37,17 @@ public class Tensor {
     }
 
     /**
+     * 从另一个张量新建张量，两者指向同一数据
+     *
+     * @param tensor 输入张量
+     */
+    public Tensor(Tensor tensor) {
+        this.data = tensor.data;
+        this.shape = new int[tensor.shape.length];
+        System.arraycopy(tensor.shape, 0, this.shape, 0, tensor.dims());
+    }
+
+    /**
      * 从一维数据构造张量
      *
      * @param data 数组数据
@@ -174,21 +185,24 @@ public class Tensor {
      * @param shape 新的数据形状，-1表示该维度形状自动计算，最多只能有一个-1
      * @return 是否改变成功
      */
-    public boolean reshape(int[] shape) {
-        int length = Util.prod(shape); //给定形状总长度
-        for (int i = 0; i < shape.length; i++)
-            if (shape[i] == -1) {
+    public Tensor reshape(final int[] shape) {
+        int[] tempShape = Arrays.copyOf(shape, shape.length);
+        int length = Util.prod(tempShape); //给定形状总长度
+        for (int i = 0; i < tempShape.length; i++)
+            if (tempShape[i] == -1) {
                 //自动计算为给定的维度形状，这种情况下length为负
                 length = -length;
-                shape[i] = data.length / length;
+                tempShape[i] = data.length / length;
             }
 
-        if (Util.prod(shape) != data.length) {
+        if (Util.prod(tempShape) != data.length) {
             System.out.println("Error" + Util.getPos() + " Data size " + data.length + " can not reshape to " + Arrays.toString(shape) + "!");
-            return false;
+            return null;
         }
-        this.shape = shape;
-        return true;
+
+        Tensor tempTensor = new Tensor(this);
+        tempTensor.shape = tempShape;
+        return tempTensor;
     }
 
     /**
@@ -211,7 +225,7 @@ public class Tensor {
         tempShape[dims() - 2] = length1;
         tempShape[dims() - 1] = length2;
         Tensor tempTensor = new Tensor(tempData);
-        tempTensor.reshape(tempShape);
+        tempTensor = tempTensor.reshape(tempShape);
         return tempTensor;
     }
 
@@ -384,8 +398,7 @@ public class Tensor {
                     output[i * colOfMat2 + j] += this.data[i * colOfMat1 + k] * input.data[k * colOfMat2 + j];
             }
         Tensor result = new Tensor(output);
-        result.reshape(new int[]{rowOfMat1, colOfMat2});
-        return result;
+        return result.reshape(new int[]{rowOfMat1, colOfMat2});
     }
 
     public int size() {   // 获取数据的长度
@@ -400,6 +413,13 @@ public class Tensor {
         System.arraycopy(inputData, 0, this.data, 0, inputData.length);
     }
 
+    public void setShape(int[] shape) {
+        System.arraycopy(shape, 0, this.shape, 0, shape.length);
+    }
+
+    public int[] getShape() {
+        return Arrays.copyOf(this.shape, this.shape.length);
+    }
 
     /**
      * 获取原始的数据
