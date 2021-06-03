@@ -304,6 +304,16 @@ public class Tensor {
         for (float datum : this.data) sum += datum;
         return sum;
     }
+    public float meanAllData() {
+        return sum()/data.length;
+    }
+    public float varAllData() {
+        float var = 0;
+        float mean = meanAllData();
+        for (float datum : this.data) var += Math.pow((datum-mean),2);
+        return var/data.length ;
+    }
+
 
     /**
      * 求两个张量的点乘

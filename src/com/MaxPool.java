@@ -36,7 +36,7 @@ public class MaxPool extends Pool {
         float[][][] inputData = new float[channel][inputHeight][inputWeight];
         for (int i = 0; i < channel; i++)
             for (int j = this.padding[0]; j < inputHeight; j++)
-                System.arraycopy(inputDataRaw[i][j], 0, inputData[i][j], this.padding[1], inputDataRaw[i].length);
+                System.arraycopy(inputDataRaw[i][j], 0, inputData[i][j], this.padding[1], inputDataRaw[i][j].length);
 
         for (int c = 0; c < channel; c++) {
             for (int h = 0; h < height; h++) {

@@ -1,15 +1,18 @@
 package test;
 
-import com.Conv2D;
-import com.Tensor;
-import com.Util;
+import com.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class Conv2DTest {
 
     Conv2D conv;
+
 
     @BeforeEach
     void setUp() {
@@ -23,19 +26,47 @@ class Conv2DTest {
 
     @Test
     void forward() {
-        Tensor input = Util.onesTensor(new int[]{2, 3, 3});
-        conv.setParameters(Util.onesTensor(new int[]{2, 2, 2, 2}));
+        Tensor input = new Tensor(new float[][][]{{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}});
         Tensor output = conv.forward(input);
         System.out.println("Result: " + output);
     }
+
+
 
 
     @Test
-    void readParameters() {
+    void readParameters(){
         assert conv.readParameters("src/test/test_pars_conv2D.pt");
-        Tensor input = Util.onesTensor(new int[]{2, 3, 3});
-        System.out.println(input);
-        Tensor output = conv.forward(input);
-        System.out.println("Result: " + output);
     }
+
+    @Test
+    void PoolTest(){   //
+
+        MaxPool maxPool;
+
+        int[] shape = new int[]{2, 2};
+        AveragePool averagePool = new AveragePool(shape);
+        maxPool = new MaxPool(shape);
+        Tensor input = new Tensor(new float[][][]{{{1, 2, 3,4}, {4, 5, 6,7}, {7, 8, 9,10}},{{1, 2, 3,4}, {4, 5, 6,7}, {7, 8, 9,10}}});
+        Tensor output = maxPool.forward(input);
+        System.out.println("***********************************************************");
+        System.out.println("Result: " + input);
+        System.out.println("aver Result: " + averagePool.forward(input));
+        System.out.println("max Result: " + output);
+        System.out.println("***********************************************************");
+
+    }
+    @Test
+    void BatchNorm2dTest(){   //
+
+        BatchNorm2d batchNorm2d;
+        batchNorm2d = new BatchNorm2d(2, 2,2);
+        Tensor input = new Tensor(new float[][][]{{{1, 2, 3}, {4, 5, 6}},{{1, 2, 3}, {1, 2, 3}}});
+        System.out.println("BatchNorm2d Result: " + batchNorm2d.forward(input));
+        System.out.println("BatchNorm2d Result: " + Arrays.toString( batchNorm2d.forward(input).shape));
+
+
+
+    }
+
 }
