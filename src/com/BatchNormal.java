@@ -1,4 +1,7 @@
 package com;
+
+import java.util.Arrays;
+
 /**
  * @program: TorchInterface
  * @description: 批标准化，默认批次为 1
@@ -7,19 +10,27 @@ package com;
  **/
 
 
-public class BatchNormal extends Layer{
+public class BatchNormal extends Layer {
+    protected float[] bias;
+    protected int channel;
+
     /**
      * 神经网络层构造函数
-     *
-     * @param inputSize  输入节点数
-     * @param outputSize 输出节点数
      */
-    public BatchNormal(int inputSize, int outputSize,int... args) {
-        super(inputSize, outputSize);
+    public BatchNormal(int... args) {
+        super(0, 0);
     }
 
     @Override
     public Tensor forward(Tensor input) {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "-->BatchNormal{" +
+                "bias=" + Arrays.toString(bias) +
+                ", channel= " + channel + ", weight= " + Arrays.toString(parameters.getData()) +
+                '}';
     }
 }

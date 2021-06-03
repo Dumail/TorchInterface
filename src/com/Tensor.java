@@ -318,14 +318,26 @@ public class Tensor {
         for (float datum : this.data) sum += datum;
         return sum;
     }
+
+    /**
+     * 求张量数据的均值
+     *
+     * @return 均值
+     */
     public float meanAllData() {
-        return sum()/data.length;
+        return sum() / data.length;
     }
+
+    /**
+     * 求张量数据的方差
+     *
+     * @return 方差
+     */
     public float varAllData() {
         float var = 0;
         float mean = meanAllData();
-        for (float datum : this.data) var += Math.pow((datum-mean),2);
-        return var/data.length ;
+        for (float datum : this.data) var += Math.pow((datum - mean), 2);
+        return var / data.length;
     }
 
 
@@ -625,5 +637,32 @@ public class Tensor {
         for (int i = 0; i < value.length; i++)
             for (int j = 0; j < otherLength; j++)
                 this.data[i * otherLength + j] += value[i];
+    }
+
+
+//    @Override
+//    public Tensor clone()
+//    {
+//        Tensor clone = (Tensor) super.clone();
+//        Tensor outTensor = new Tensor(this.data);
+//        outTensor.setShape(shape);
+//        return outTensor;
+//    }
+
+    /**
+     * 复制该张量，开辟新的空间
+     */
+    @Override
+    public Tensor clone() {
+        Tensor cloneTensor = null;
+        try {
+            cloneTensor = (Tensor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        assert cloneTensor != null;
+        cloneTensor.setData(this.data);
+        cloneTensor.setShape(this.shape);
+        return cloneTensor;
     }
 }

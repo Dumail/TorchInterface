@@ -120,7 +120,10 @@ public abstract class Layer extends Module {
             e.printStackTrace();
             return null;
         }
-
+        if (weight_shape.length == 0 || bias_shape.length == 0) {
+            System.out.println("Error" + Util.getPos() + "Network structure does not match!");
+            return null;
+        }
         tuple.setParameters(weight_shape, bias_shape, weight, bias);
         return tuple;
     }

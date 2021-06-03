@@ -7,8 +7,10 @@ public class Main {
             super(inputSize, outputSize);
             this.modules = new Module[]{
                     new Conv2D(inputSize, 4, new int[]{2, 2}),
+                    new BatchNorm2d(4),
                     new Relu(),
                     new Conv2D(4, 4, new int[]{2, 2}),
+                    new BatchNorm2d(4),
                     new MaxPool(new int[]{3, 3}),
                     new Relu(),
                     new Linear(4, 2),
