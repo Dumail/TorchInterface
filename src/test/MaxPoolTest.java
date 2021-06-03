@@ -26,6 +26,6 @@ class MaxPoolTest {
         Tensor output = maxPool.forward(input);
 
         System.out.println("Input: " + input);
-        System.out.println("Result: " + output);
+        System.out.println("Max Result: " + output);
     }
 }

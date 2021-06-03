@@ -25,6 +25,6 @@ class AveragePoolTest {
         Tensor output = averagePool.forward(input);
 
         System.out.println("Input: " + input);
-        System.out.println("Result: " + output);
+        System.out.println("Average Result: " + output);
     }
 }
