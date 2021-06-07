@@ -36,9 +36,9 @@ public class Linear extends Layer {
 
     @Override
     protected boolean loadParameters(ParametersTuple tuple) {
-        int[] weight_shape=tuple.getWeight_shape();
-        int[] bias_shape=tuple.getBias_shape(); 
-        float[] weight= tuple.getWeight();
+        int[] weight_shape = tuple.getWeight_shape();
+        int[] bias_shape = tuple.getBias_shape();
+        float[] weight = tuple.getWeight();
         float[] bias= tuple.getBias();
 
         if (weight_shape[1] != inputSize || outputSize != weight_shape[0]) {

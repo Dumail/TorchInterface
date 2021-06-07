@@ -38,6 +38,8 @@ class NetworkTest {
     @Test
     void readParameters() {
         assert net.readParameters("src/test/test_pars_network.pt");
+        Tensor input = Util.rangeTensor(0, 18).reshape(new int[]{2, 3, 3});
+        System.out.println("Reuslt: " + net.forward(input));
     }
 
     @Test

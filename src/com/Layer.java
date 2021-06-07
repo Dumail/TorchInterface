@@ -1,10 +1,6 @@
 package com;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
+import java.io.*;
 
 /**
  * 基础神经网络层，具有网络参数
@@ -33,7 +29,7 @@ public abstract class Layer extends Module {
     /**
      * 从字符串载入网络层参数
      *
-     * @param tuple 字符串表示的参数
+     * @param tuple 参数元组
      */
     protected boolean loadParameters(ParametersTuple tuple) {
         System.out.println("Error" + Util.getPos() + "These parameters want to set, but this layer has no parameter!");
@@ -43,89 +39,71 @@ public abstract class Layer extends Module {
     }
 
     /**
-     * 从文件载入网络网络层参数
+     * 从二进制文件载入网络层参数
+     * 参数存储文件通过以下python函数存储：
+     * def save_visual(net):
+     * par = net.parameters()
+     * list_par = []
+     * for p in par:
+     * temp_list=[]
+     * shape = list(p.shape)
+     * len_shape = len(p.shape)
+     * data = p.data.flatten().numpy().tolist()
+     * len_data = len(data)
+     * temp_list.append(len_shape)
+     * temp_list.extend(shape)
+     * temp_list.append(len_data)
+     * temp_list.extend(data)
+     * list_par.append(temp_list)
+     * with open("pars.pt", "wb") as f:
+     * for par in list_par:
+     * f.write(struct.pack('>i',par[0]))
+     * #             print(par[0])
+     * for i in range(par[0]):
+     * f.write(struct.pack('>i',par[i+1]))
+     * #                 print(par[i+1])
+     * f.write(struct.pack('>i',par[par[0]+1]))
+     * #             print(par[par[0]+1])
+     * for i in range(par[par[0]+1]):
+     * f.write(struct.pack('>f',par[par[0]+2+i]))
+     * #                 print(par[par[0]+2+i])
      *
-     * @param filePath 参数文件
+     * @param filePath 参数文件路径
      * @return 是否读取成功
      */
     public boolean readParameters(String filePath) {
-        String encoding = "UTF-8"; //已知文件编码
         File file = new File(filePath);
+        ParametersTuple tuple = new ParametersTuple();
         if (!file.exists()) {
             System.out.println("Error" + Util.getPos() + " Open file failed.");
             return false;
         }
-        long fileLength = file.length();
-        //先全部读入字节流再一次性进行编码转换
-        byte[] fileContent = new byte[(int) fileLength];
         try {
-            FileInputStream in = new FileInputStream(file);
-            int length = in.read(fileContent);
-            in.close();
+            DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+            // 权重读取
+            int weight_shape_size = in.readInt();
+            int[] weight_shape = new int[weight_shape_size];
+            for (int j = 0; j < weight_shape_size; j++)
+                weight_shape[j] = in.readInt();
+            int weight_data_size = in.readInt();
+            float[] weight_data = new float[weight_data_size];
+            for (int j = 0; j < weight_data_size; j++)
+                weight_data[j] = in.readFloat();
+
+            // 偏置读取
+            int bias_shape_size = in.readInt();
+            int[] bias_shape = new int[bias_shape_size];
+            for (int j = 0; j < bias_shape_size; j++)
+                bias_shape[j] = in.readInt();
+            int bias_data_size = in.readInt();
+            float[] bias_data = new float[bias_data_size];
+            for (int j = 0; j < bias_data_size; j++)
+                bias_data[j] = in.readFloat();
+            tuple.setParameters(weight_shape, bias_shape, weight_data, bias_data);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //编码转换
-        String paramStr;
-        try {
-//            this.loadParameters(new String(fileContent, encoding));
-            paramStr = new String(fileContent, encoding);
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("The OS does not support " + encoding);
-            e.printStackTrace();
-            return false;
-        }
-
-        ParametersTuple tuple;
-        if ((tuple = paramStrProcess(paramStr)) == null) {
-            System.out.println("Error" + Util.getPos() + " Something wrong when covert str to params.");
-            return false;
-        }
         return loadParameters(tuple);
-    }
-
-    /**
-     * 处理参数字符串得到参数元祖。
-     * 对于单个网络层，可以将参数文件中所有字符串用该方法处理
-     * 对于多层网络，需要将各层的参数字符串分别用该方法处理
-     *
-     * @param paramStr 字符串形式的参数
-     * @return 元组形式的参数
-     */
-    protected ParametersTuple paramStrProcess(String paramStr) {
-        ParametersTuple tuple = new ParametersTuple();
-        String[] listParameters = paramStr.split("\n");
-        int[] weight_shape, bias_shape;
-        float[] weight, bias;
-        try {
-            //得到权重形状数组
-            weight_shape = Arrays.stream(listParameters[0].substring(1, listParameters[0].length() - 1).replace(" ", "").split(",")).mapToInt(Integer::parseInt).toArray();
-            //得到权重数组
-            String[] weight_str = listParameters[1].trim().split(",");
-            weight = new float[weight_str.length];
-            for (int i = 0; i < weight_str.length; i++) {
-                weight[i] = Float.parseFloat(weight_str[i]);
-            }
-
-            //得到偏置形状数组
-            bias_shape = Arrays.stream(listParameters[3].substring(1, listParameters[3].length() - 1).replace(" ", "").split(",")).mapToInt(Integer::parseInt).toArray();
-            //得到偏置数组
-            String[] bias_str = listParameters[4].trim().split(",");
-            bias = new float[bias_str.length];
-            for (int i = 0; i < bias_str.length; i++) {
-                bias[i] = Float.parseFloat(bias_str[i]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        if (weight_shape.length == 0 || bias_shape.length == 0) {
-            System.out.println("Error" + Util.getPos() + "Network structure does not match!");
-            return null;
-        }
-        tuple.setParameters(weight_shape, bias_shape, weight, bias);
-        return tuple;
     }
 }
 

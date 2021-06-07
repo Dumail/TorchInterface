@@ -28,18 +28,18 @@ public abstract class Pool extends Module {
         } else
             System.out.println("Error" + Util.getPos() + " args dim must be 1 or 2.");
 
+        step = Arrays.copyOf(kernelSize, kernelSize.length);
         if (args.length > 1) {  // padding 0 代表 Valid ，1 代表 Same
             padding = new int[]{0, 0};
             if (args[1].length == 2) {
                 padding[0] = args[1][0];
                 padding[1] = args[1][1];
             }
-
         }
 
         if (args.length >= 2) {          //  存储步长，默认为
             if (args[2].length == 1)
-                step = new int[]{args[2][0], args[2][0]};
+                step = Arrays.copyOf(kernelSize, kernelSize.length);
             else if (args[2].length == 2)
                 step =  Arrays.copyOf(args[2], args[2].length);
             else
